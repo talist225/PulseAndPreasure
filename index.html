@@ -241,6 +241,7 @@
         transition:
           transform 0.5s cubic-bezier(0.19, 1, 0.22, 1),
           opacity 0.5s ease;
+        box-sizing: border-box;
       }
 
       /* החזרת רקע יוקרתי כברירת מחדל כדי למנוע שקיפות לא רצויה */
@@ -595,6 +596,7 @@
         flex-direction: column;
         gap: 10px;
         width: 100%;
+        padding-bottom: env(safe-area-inset-bottom, 10px);
       }
 
       .btn {
