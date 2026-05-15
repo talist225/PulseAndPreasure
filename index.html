@@ -52,43 +52,37 @@
         user-select: none;
       }
 
+      html,
       body {
-        background: var(--bg-dark);
-        color: var(--text-main);
-        min-height: 100vh;
-        min-height: 100dvh; /* פתרון החיתוך במובייל */
-        display: flex;
-        justify-content: center;
-        align-items: flex-start; /* מונע מהחלק העליון להחתך במובייל */
+        height: 100%;
+        height: 100dvh;
         overflow: hidden;
       }
 
-      /* החזרת המרכוז רק במסכים גדולים */
-      @media (min-width: 768px) {
-        body {
-          align-items: center;
-        }
+      body {
+        background: var(--bg-dark);
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        overflow: hidden;
       }
 
       .app-container {
         width: 100%;
         max-width: 430px;
-        height: 100dvh; /* גובה דינמי מדויק למובייל */
+        height: 100dvh;
         position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 20px 24px;
-        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
         overflow: hidden;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
         transition:
           background 1s ease,
           box-shadow 1s ease;
         color: white;
         text-align: center;
-
-        /* --- התיקון כאן: שימוש ב-box-sizing שמכיל את ה-Border בפנים --- */
         box-sizing: border-box;
+        /* הקונטיינר עצמו רק מחזיק את ה-screens, כל layout בתוך .screen */
+        display: block;
       }
 
       /* סטייטים של רקעים דינמיים לפי שלב */
@@ -229,22 +223,45 @@
         left: 0;
         width: 100%;
         height: 100%;
-        padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        background: transparent; /* שקוף כדי לא להסתיר את צבעי ה-container */
+        background: transparent;
         z-index: 10;
         transition:
           transform 0.5s cubic-bezier(0.19, 1, 0.22, 1),
           opacity 0.5s ease;
         box-sizing: border-box;
+        /* padding מוגדר בנפרד למטה לפי media query */
+        padding: 16px 20px;
+        padding-top: max(16px, env(safe-area-inset-top));
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
       }
 
       /* החזרת רקע יוקרתי כברירת מחדל כדי למנוע שקיפות לא רצויה */
       #splashScreen,
       #extraGamesScreen {
         background: var(--bg-luxury);
+      }
+
+      /* מסך המשחק הראשי */
+      #gameScreen {
+        background: transparent;
+        z-index: 5;
+      }
+
+      #gameScreen.hidden {
+        transform: none !important; /* לא מוזז - splashScreen מכסה אותו */
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      @media (min-height: 700px) {
+        .screen {
+          padding: 20px 24px;
+          padding-top: max(20px, env(safe-area-inset-top));
+          padding-bottom: max(20px, env(safe-area-inset-bottom));
+        }
       }
 
       .screen.hidden {
@@ -427,8 +444,9 @@
       .game-header {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
         width: 100%;
+        flex-shrink: 0;
       }
 
       .turn-indicator {
@@ -482,12 +500,15 @@
         align-items: center;
         justify-content: center;
         perspective: 1000px;
-        margin: 10px 0;
+        margin: 8px 0;
+        min-height: 0; /* חשוב! מאפשר flex לכווץ */
       }
 
       .card-box {
         width: 100%;
-        height: 390px;
+        /* גובה גמיש במקום קבוע */
+        height: min(390px, calc(100dvh - 380px));
+        min-height: 220px;
         position: relative;
         transform-style: preserve-3d;
         transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2);
@@ -591,18 +612,18 @@
       .action-area {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         width: 100%;
-        padding-bottom: env(safe-area-inset-bottom, 10px);
+        flex-shrink: 0;
       }
 
       .btn {
         background: var(--neon-red);
         color: white;
         border: none;
-        padding: 16px;
+        padding: 14px;
         border-radius: 16px;
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         font-weight: 800;
         cursor: pointer;
         box-shadow: 0 6px 20px var(--neon-glow);
@@ -611,7 +632,7 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        margin-bottom: env(safe-area-inset-bottom, 0px); /* תמיכה באייפון */
+        margin-bottom: 0;
       }
 
       .btn:active {
@@ -1215,97 +1236,107 @@
         </button>
       </div>
 
-      <div class="game-header">
-        <div class="stage-tracker stage-1" id="stageTracker">
-          שלב 1: גישושים וחימום מנועים ✨
-        </div>
-        <div class="timer-banner" id="timerBanner">⏳ זמן נותר: 10:00</div>
-
-        <div class="dice-banner" id="diceBanner" style="display: none">
-          <div class="dice-item">
-            📍 מיקום אקראי: <span id="diceLocation">מזרן/מיטה</span>
+      <div
+        class="screen hidden"
+        id="gameScreen"
+        style="background: transparent"
+      >
+        <div class="game-header">
+          <div class="stage-tracker stage-1" id="stageTracker">
+            שלב 1: גישושים וחימום מנועים ✨
           </div>
-          <div class="dice-item">
-            ⏱️ הגבלת זמן: <span id="diceDuration">ללא</span>
-          </div>
-        </div>
+          <div class="timer-banner" id="timerBanner">⏳ זמן נותר: 10:00</div>
 
-        <div class="turn-indicator" id="turnIndicator">
-          התור של: <span id="activePlayerName">שחקן 1</span>
-        </div>
-
-        <div class="filters">
-          <button
-            class="filter-btn active"
-            id="f-all"
-            onclick="filterDeck('all')"
-          >
-            הכל
-          </button>
-          <button
-            class="filter-btn"
-            id="f-mission"
-            onclick="filterDeck('mission')"
-          >
-            😈 משימות
-          </button>
-          <button
-            class="filter-btn"
-            id="f-reaction"
-            onclick="filterDeck('reaction')"
-          >
-            🔮 תגובות
-          </button>
-          <button class="filter-btn" id="f-bonus" onclick="filterDeck('bonus')">
-            ✨ בונוסים
-          </button>
-        </div>
-      </div>
-
-      <div class="deck-area">
-        <div class="card-box" id="cardBox" onclick="toggleCardFlip()">
-          <div class="card-side card-back-side">
-            <div class="icon">💋</div>
-            <div class="prompt">לחצו לחשיפת המשימה</div>
-          </div>
-          <div class="card-side card-front-side mission" id="cardFront">
-            <div class="card-top">
-              <span class="card-tag" id="cardTag">משימה זוגית</span>
-              <span id="cardIcon">😈</span>
+          <div class="dice-banner" id="diceBanner" style="display: none">
+            <div class="dice-item">
+              📍 מיקום אקראי: <span id="diceLocation">מזרן/מיטה</span>
             </div>
-            <p class="card-main-text" id="cardText">טוען...</p>
-            <div class="card-bottom">
-              <span id="cardLevel">רמה: קל</span>
-              <span id="cardCountDisplay">נותרו קלפים</span>
+            <div class="dice-item">
+              ⏱️ הגבלת זמן: <span id="diceDuration">ללא</span>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div class="action-area">
-        <button class="btn" id="mainActionBtn" onclick="handleMainAction()">
-          שלוף קלף 🃏
-        </button>
-        <div style="display: flex; gap: 8px; width: 100%">
-          <button
-            class="btn btn-sec"
-            style="flex: 1"
-            onclick="resetEntireGame()"
-          >
-            איפוס
+          <div class="turn-indicator" id="turnIndicator">
+            התור של: <span id="activePlayerName">שחקן 1</span>
+          </div>
+
+          <div class="filters">
+            <button
+              class="filter-btn active"
+              id="f-all"
+              onclick="filterDeck('all')"
+            >
+              הכל
+            </button>
+            <button
+              class="filter-btn"
+              id="f-mission"
+              onclick="filterDeck('mission')"
+            >
+              😈 משימות
+            </button>
+            <button
+              class="filter-btn"
+              id="f-reaction"
+              onclick="filterDeck('reaction')"
+            >
+              🔮 תגובות
+            </button>
+            <button
+              class="filter-btn"
+              id="f-bonus"
+              onclick="filterDeck('bonus')"
+            >
+              ✨ בונוסים
+            </button>
+          </div>
+        </div>
+
+        <div class="deck-area">
+          <div class="card-box" id="cardBox" onclick="toggleCardFlip()">
+            <div class="card-side card-back-side">
+              <div class="icon">💋</div>
+              <div class="prompt">לחצו לחשיפת המשימה</div>
+            </div>
+            <div class="card-side card-front-side mission" id="cardFront">
+              <div class="card-top">
+                <span class="card-tag" id="cardTag">משימה זוגית</span>
+                <span id="cardIcon">😈</span>
+              </div>
+              <p class="card-main-text" id="cardText">טוען...</p>
+              <div class="card-bottom">
+                <span id="cardLevel">רמה: קל</span>
+                <span id="cardCountDisplay">נותרו קלפים</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-area">
+          <button class="btn" id="mainActionBtn" onclick="handleMainAction()">
+            שלוף קלף 🃏
           </button>
-          <button
-            class="btn btn-sec"
-            style="
-              flex: 1.4;
-              border-color: var(--gold);
-              color: var(--gold);
-              font-weight: 800;
-            "
-            onclick="openExtraGames()"
-          >
-            🔥 משחקי עונג
-          </button>
+          <div style="display: flex; gap: 8px; width: 100%">
+            <button
+              class="btn btn-sec"
+              style="flex: 1"
+              onclick="resetEntireGame()"
+            >
+              איפוס
+            </button>
+            <button
+              class="btn btn-sec"
+              style="
+                flex: 1.4;
+                border-color: var(--gold);
+                color: var(--gold);
+                font-weight: 800;
+              "
+              onclick="openExtraGames()"
+            >
+              🔥 משחקי עונג
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1876,6 +1907,7 @@
         }
 
         document.getElementById("splashScreen").classList.add("hidden");
+        document.getElementById("gameScreen").classList.remove("hidden");
         updateTurnUI();
         updateStageUI();
       }
@@ -2322,6 +2354,7 @@
           .getElementById("extraGamesScreen")
           .classList.remove("slide-up-active");
         document.getElementById("splashScreen").classList.remove("hidden");
+        document.getElementById("gameScreen").classList.add("hidden");
 
         document.getElementById("accord-phone").checked = false;
         document.getElementById("accord-flow").checked = false;
