@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
+
+    <title>SpeeDate Premium</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-dark: #070204;
+        --bg-luxury: linear-gradient(
+          135deg,
+          #0d0408 0%,
+          #1a030d 50%,
+          #050103 100%
+        );
+
+        --neon-red: #ff0048;
+        --gold: #d4af37;
+        --text-main: #fff5f7;
+
+        --card-flirt: linear-gradient(135deg, #ff5f6d, #ffc371);
+        --card-tease: linear-gradient(135deg, #ff416c, #ff4b2b);
+        --card-intimacy: linear-gradient(135deg, #7f00ff, #e100ff);
+        --card-hot: linear-gradient(135deg, #ff003c, #660011);
+        --card-funny: linear-gradient(135deg, #00c6ff, #0072ff);
+        --card-special: linear-gradient(135deg, #f59e0b, #92400e);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Assistant", sans-serif;
+      }
+
+      body {
+        background: var(--bg-dark);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        color: white;
+      }
+
+      .app {
+        width: 100%;
+        max-width: 430px;
+        height: 100vh;
+        background: var(--bg-luxury);
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .title {
+        text-align: center;
+        font-size: 2.6rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, var(--neon-red), var(--gold));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #c7b9be;
+        margin-top: 5px;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        background: var(--bg-luxury);
+        z-index: 5;
+        padding: 28px 22px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: 0.5s;
+      }
+
+      .screen.hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-100%);
+      }
+
+      .inputs {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      label {
+        color: var(--neon-red);
+        font-weight: 700;
+      }
+
+      input {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 16px;
+        border-radius: 14px;
+        color: white;
+        font-size: 1rem;
+        outline: none;
+        text-align: center;
+      }
+
+      .btn {
+        border: none;
+        background: var(--neon-red);
+        color: white;
+        border-radius: 16px;
+        padding: 18px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .btn:active {
+        transform: scale(0.97);
+      }
+
+      .top {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .turn {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 30px;
+        padding: 12px;
+        text-align: center;
+        font-weight: 700;
+      }
+
+      .turn span {
+        color: var(--neon-red);
+      }
+
+      .progress-wrap {
+        width: 100%;
+      }
+
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+
+      .progress {
+        height: 12px;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ff0048, #ff8c42);
+        transition: 0.4s;
+      }
+
+      .filters {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+      }
+
+      .filters button {
+        border: none;
+        padding: 10px 12px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.05);
+        color: white;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .filters button.active {
+        background: rgba(255, 0, 72, 0.25);
+      }
+
+      .deck {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        perspective: 1000px;
+      }
+
+      .card {
+        width: 100%;
+        height: 440px;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+      }
+
+      .card.flipped {
+        transform: rotateY(180deg);
+      }
+
+      .side {
+        position: absolute;
+        inset: 0;
+        border-radius: 28px;
+        padding: 24px;
+        backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .back {
+        background: #100208;
+        border: 2px solid rgba(255, 0, 72, 0.4);
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+
+      .back .emoji {
+        font-size: 4rem;
+        animation: pulse 2s infinite;
+      }
+
+      .back p {
+        margin-top: 20px;
+        color: #ff7f9e;
+        font-weight: 700;
+      }
+
+      .front {
+        transform: rotateY(180deg);
+      }
+
+      .front.flirt {
+        background: var(--card-flirt);
+      }
+
+      .front.tease {
+        background: var(--card-tease);
+      }
+
+      .front.intimacy {
+        background: var(--card-intimacy);
+      }
+
+      .front.hot {
+        background: var(--card-hot);
+      }
+
+      .front.funny {
+        background: var(--card-funny);
+      }
+
+      .front.special {
+        background: var(--card-special);
+      }
+
+      .card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .tag {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 800;
+      }
+
+      .text {
+        font-size: 1.45rem;
+        text-align: center;
+        line-height: 1.6;
+        font-weight: 700;
+      }
+
+      .bottom {
+        display: flex;
+        justify-content: space-between;
+        opacity: 0.8;
+        font-size: 0.85rem;
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .secondary {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.08);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- START SCREEN -->
+
+      <div class="screen" id="startScreen">
+        <div>
+          <h1 class="title">SpeeDate</h1>
+          <p class="subtitle">
+            מתח עולה. פלירטוט. אינטימיות. והכל זורם טבעי.
+          </p>
+        </div>
+
+        <div class="inputs">
+          <div class="input-group">
+            <label>שחקן 1</label>
+            <input id="p1" placeholder="הכנס שם..." />
+          </div>
+
+          <div class="input-group">
+            <label>שחקן 2</label>
+            <input id="p2" placeholder="הכנס שם..." />
+          </div>
+        </div>
+
+        <button class="btn" onclick="startGame()">
+          התחל משחק 🔥
+        </button>
+      </div>
+
+      <!-- GAME -->
+
+      <div class="top">
+        <div class="turn">
+          התור של:
+          <span id="turnName">שחקן 1</span>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-label">
+            <span>מד מתח</span>
+            <span id="stageText">פלירטוט</span>
+          </div>
+
+          <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+        </div>
+
+        <div class="filters">
+          <button class="active" onclick="setFilter('all', this)">
+            הכל
+          </button>
+
+          <button onclick="setFilter('flirt', this)">
+            😏 פלירטוט
+          </button>
+
+          <button onclick="setFilter('tease', this)">
+            🔥 טיזינג
+          </button>
+
+          <button onclick="setFilter('intimacy', this)">
+            ❤️ אינטימיות
+          </button>
+
+          <button onclick="setFilter('hot', this)">
+            🥵 לוהט
+          </button>
+
+          <button onclick="setFilter('funny', this)">
+            😂 מצחיק
+          </button>
+
+          <button onclick="setFilter('special', this)">
+            🃏 מיוחד
+          </button>
+        </div>
+      </div>
+
+      <!-- CARD -->
+
+      <div class="deck">
+        <div class="card" id="card" onclick="flipCard()">
+          <div class="side back">
+            <div class="emoji">💋</div>
+            <p>לחצו לחשיפת הקלף</p>
+          </div>
+
+          <div class="side front flirt" id="frontCard">
+            <div class="card-top">
+              <div class="tag" id="tag">פלירטוט</div>
+              <div id="icon">😏</div>
+            </div>
+
+            <div class="text" id="text">
+              טוען...
+            </div>
+
+            <div class="bottom">
+              <span id="level">שלב 1</span>
+              <span id="counter">0 קלפים</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+
+      <div class="actions">
+        <button class="btn" id="mainBtn" onclick="mainAction()">
+          שלוף קלף 🃏
+        </button>
+
+        <button class="btn secondary" onclick="resetGame()">
+          איפוס משחק
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const cards = [
+        // FLIRT
+
+        {
+          type: "flirt",
+          tag: "פלירטוט",
+          icon: "😏",
+          level: 1,
+          text: "{turn}, התקרב/י לפנים של {partner} עד שכמעט יש נשיקה — ועצור/י ברגע האחרון.",
+        },
+
+        {
+          type: "flirt",
+          tag: "פלירטוט",
+          icon: "👀",
+          level: 1,
+          text: "{turn}, הסתכל/י ל-{partner} בעיניים במשך 20 שניות בלי לצחוק.",
+        },
+
+        {
+          type: "flirt",
+          tag: "פלירטוט",
+          icon: "💬",
+          level: 1,
+          text: "{turn}, ספר/י מה הדבר הכי מושך ב-{partner}.",
+        },
+
+        {
+          type: "flirt",
+          tag: "פלירטוט",
+          icon: "🫦",
+          level: 1,
+          text: "{turn}, נשוך/כי את השפה והתקרב/י ל-{partner} בצורה מפתה.",
+        },
+
+        // TEASE
+
+        {
+          type: "tease",
+          tag: "טיזינג",
+          icon: "🔥",
+          level: 2,
+          text: "{turn}, העבר/י אצבע לאורך הירך הפנימית של {partner}.",
+        },
+
+        {
+          type: "tease",
+          tag: "טיזינג",
+          icon: "💋",
+          level: 2,
+          text: "{turn}, נשק/י את הצוואר של {partner} במשך 10 שניות.",
+        },
+
+        {
+          type: "tease",
+          tag: "טיזינג",
+          icon: "🖐️",
+          level: 2,
+          text: "{turn}, העבר/י יד לאורך הגב של {partner} בצורה איטית.",
+        },
+
+        // INTIMACY
+
+        {
+          type: "intimacy",
+          tag: "אינטימיות",
+          icon: "❤️",
+          level: 3,
+          text: "{turn}, שתפו אחד את השני בפנטזיה רומנטית.",
+        },
+
+        {
+          type: "intimacy",
+          tag: "אינטימיות",
+          icon: "🥰",
+          level: 3,
+          text: "{turn}, תן/י חיבוק צמוד ואיטי ל-{partner}.",
+        },
+
+        {
+          type: "intimacy",
+          tag: "אינטימיות",
+          icon: "💞",
+          level: 3,
+          text: "{turn}, ספר/י ל-{partner} מתי הכי נמשכת אליו/אליה.",
+        },
+
+        // HOT
+
+        {
+          type: "hot",
+          tag: "לוהט",
+          icon: "🥵",
+          level: 4,
+          text: "{turn}, נשק/י את {partner} נשיקה ארוכה ואינטנסיבית.",
+        },
+
+        {
+          type: "hot",
+          tag: "לוהט",
+          icon: "🔥",
+          level: 4,
+          text: "{turn}, הצמיד/י גוף ל-{partner} במשך 20 שניות.",
+        },
+
+        {
+          type: "hot",
+          tag: "לוהט",
+          icon: "💫",
+          level: 4,
+          text: "{turn}, לחש/י ל-{partner} משהו מפתה באוזן.",
+        },
+
+        // FUNNY
+
+        {
+          type: "funny",
+          tag: "מצחיק",
+          icon: "😂",
+          level: 1,
+          text: "{turn}, עשה/י מבט מפתה במשך 15 שניות בלי לצחוק.",
+        },
+
+        {
+          type: "funny",
+          tag: "מצחיק",
+          icon: "🎭",
+          level: 1,
+          text: "{turn}, דבר/י בקול סקסי מוגזם עד סוף התור.",
+        },
+
+        // SPECIAL
+
+        {
+          type: "special",
+          tag: "מיוחד",
+          icon: "🃏",
+          level: 3,
+          text: "{turn}, בחר/י מי יבצע את המשימה הבאה.",
+        },
+
+        {
+          type: "special",
+          tag: "מיוחד",
+          icon: "⚡",
+          level: 4,
+          text: "שלפו מיד עוד קלף נוסף.",
+        },
+      ];
+
+      let players = ["שחקן 1", "שחקן 2"];
+      let active = 0;
+      let flipped = false;
+      let used = 0;
+      let filter = "all";
+      let currentDeck = [];
+
+      function shuffleDeck() {
+        currentDeck = [...cards];
+
+        for (let i = currentDeck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [currentDeck[i], currentDeck[j]] = [
+            currentDeck[j],
+            currentDeck[i],
+          ];
+        }
+      }
+
+      shuffleDeck();
+
+      function startGame() {
+        players[0] =
+          document.getElementById("p1").value.trim() || "שחקן 1";
+
+        players[1] =
+          document.getElementById("p2").value.trim() || "שחקן 2";
+
+        document.getElementById("startScreen").classList.add("hidden");
+
+        updateTurn();
+      }
+
+      function updateTurn() {
+        document.getElementById("turnName").innerText =
+          players[active];
+      }
+
+      function mainAction() {
+        flipCard();
+      }
+
+      function flipCard() {
+        const card = document.getElementById("card");
+
+        if (!flipped) {
+          loadCard();
+
+          card.classList.add("flipped");
+
+          flipped = true;
+
+          document.getElementById("mainBtn").innerText =
+            "המשימה בוצעה ✓";
+        } else {
+          card.classList.remove("flipped");
+
+          flipped = false;
+
+          active = active === 0 ? 1 : 0;
+
+          updateTurn();
+
+          document.getElementById("mainBtn").innerText =
+            "שלוף קלף 🃏";
+        }
+      }
+
+      function loadCard() {
+        let filtered = currentDeck.filter(
+          (c) => filter === "all" || c.type === filter,
+        );
+
+        if (!filtered.length) {
+          shuffleDeck();
+
+          filtered = currentDeck.filter(
+            (c) => filter === "all" || c.type === filter,
+          );
+        }
+
+        // מערכת מתח עולה
+
+        const stage = Math.min(Math.floor(used / 4) + 1, 4);
+
+        let stageCards = filtered.filter(
+          (c) => c.level <= stage,
+        );
+
+        if (!stageCards.length) {
+          stageCards = filtered;
+        }
+
+        const selected =
+          stageCards[
+            Math.floor(Math.random() * stageCards.length)
+          ];
+
+        currentDeck.splice(
+          currentDeck.indexOf(selected),
+          1,
+        );
+
+        used++;
+
+        const turn = players[active];
+        const partner = players[active === 0 ? 1 : 0];
+
+        const text = selected.text
+          .replaceAll("{turn}", turn)
+          .replaceAll("{partner}", partner);
+
+        const front = document.getElementById("frontCard");
+
+        front.className = `side front ${selected.type}`;
+
+        document.getElementById("tag").innerText =
+          selected.tag;
+
+        document.getElementById("icon").innerText =
+          selected.icon;
+
+        document.getElementById("text").innerText = text;
+
+        document.getElementById("level").innerText =
+          `שלב ${selected.level}`;
+
+        document.getElementById("counter").innerText =
+          `${used} קלפים`;
+
+        updateProgress();
+      }
+
+      function updateProgress() {
+        const progress = Math.min((used / 20) * 100, 100);
+
+        document.getElementById("progressBar").style.width =
+          `${progress}%`;
+
+        let text = "פלירטוט";
+
+        if (used >= 4) text = "טיזינג";
+        if (used >= 8) text = "אינטימיות";
+        if (used >= 12) text = "לוהט";
+        if (used >= 16) text = "אקסטרים";
+
+        document.getElementById("stageText").innerText =
+          text;
+      }
+
+      function setFilter(type, btn) {
+        filter = type;
+
+        document
+          .querySelectorAll(".filters button")
+          .forEach((b) =>
+            b.classList.remove("active"),
+          );
+
+        btn.classList.add("active");
+      }
+
+      function resetGame() {
+        active = 0;
+        flipped = false;
+        used = 0;
+        filter = "all";
+
+        shuffleDeck();
+
+        document
+          .getElementById("card")
+          .classList.remove("flipped");
+
+        document.getElementById("progressBar").style.width =
+          `0%`;
+
+        document.getElementById("stageText").innerText =
+          "פלירטוט";
+
+        document
+          .querySelectorAll(".filters button")
+          .forEach((b, i) => {
+            b.classList.remove("active");
+
+            if (i === 0) b.classList.add("active");
+          });
+
+        document.getElementById("startScreen").classList.remove("hidden");
+      }
+    </script>
+  </body>
+</html>
