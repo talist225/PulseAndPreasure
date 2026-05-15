@@ -601,6 +601,37 @@
         width: 0px;
       }
 
+      .card-dice-row {
+        display: none; /* מוסתר לכרטיסי תגובה ובונוס */
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 6px 0 2px;
+      }
+
+      .card-dice-row.visible {
+        display: flex;
+      }
+
+      .card-dice-pill {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #fff;
+        backdrop-filter: blur(6px);
+        white-space: nowrap;
+      }
+
+      .card-dice-emoji {
+        font-size: 0.85rem;
+      }
+
       .card-bottom {
         display: flex;
         justify-content: space-between;
@@ -823,6 +854,143 @@
         100% {
           box-shadow: 0 0 20px rgba(255, 0, 60, 0.15);
         }
+      }
+      /* ========== קובייה תלת-מימדית ========== */
+      .dice-scene-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px 0 6px;
+      }
+
+      .dice-scene {
+        width: 140px;
+        height: 140px;
+        perspective: 500px;
+      }
+
+      .dice-cube {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transform: rotateX(-20deg) rotateY(30deg);
+        transition: transform 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      .dice-cube.rolling {
+        animation: diceRoll 1s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+      }
+
+      @keyframes diceRoll {
+        0% {
+          transform: rotateX(-20deg) rotateY(30deg);
+        }
+        25% {
+          transform: rotateX(200deg) rotateY(160deg);
+        }
+        50% {
+          transform: rotateX(350deg) rotateY(320deg);
+        }
+        75% {
+          transform: rotateX(480deg) rotateY(450deg);
+        }
+        100% {
+          transform: var(--dice-final-transform);
+        }
+      }
+
+      .dice-face {
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        background: linear-gradient(135deg, #1a0530 0%, #2d0850 100%);
+        box-shadow:
+          inset 0 0 20px rgba(121, 40, 202, 0.3),
+          0 0 15px rgba(0, 0, 0, 0.5);
+        backface-visibility: hidden;
+      }
+
+      .face-1 {
+        transform: rotateY(0deg) translateZ(70px);
+      }
+      .face-2 {
+        transform: rotateY(180deg) translateZ(70px);
+      }
+      .face-3 {
+        transform: rotateY(90deg) translateZ(70px);
+      }
+      .face-4 {
+        transform: rotateY(-90deg) translateZ(70px);
+      }
+      .face-5 {
+        transform: rotateX(90deg) translateZ(70px);
+      }
+      .face-6 {
+        transform: rotateX(-90deg) translateZ(70px);
+      }
+
+      .dice-face-icon {
+        font-size: 2.8rem;
+        line-height: 1;
+        filter: drop-shadow(0 0 8px rgba(121, 40, 202, 0.8));
+      }
+
+      .dice-face-name {
+        font-size: 0.7rem;
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.85);
+        text-align: center;
+        padding: 0 8px;
+        letter-spacing: 0.3px;
+      }
+
+      .dice-result-box {
+        width: 100%;
+        background: rgba(121, 40, 202, 0.08);
+        border: 1px solid rgba(121, 40, 202, 0.35);
+        border-radius: 16px;
+        padding: 14px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.4s ease;
+      }
+
+      .dice-result-box.revealed {
+        border-color: #7928ca;
+        background: rgba(121, 40, 202, 0.15);
+        box-shadow: 0 0 20px rgba(121, 40, 202, 0.2);
+      }
+
+      .dice-result-icon {
+        font-size: 2rem;
+        line-height: 1;
+        transition: all 0.3s ease;
+      }
+
+      .dice-result-name {
+        font-size: 1.15rem;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 0.3px;
+      }
+
+      .dice-result-desc {
+        font-size: 0.82rem;
+        color: #b3a2a7;
+        line-height: 1.4;
+        margin-top: 2px;
       }
     </style>
   </head>
@@ -1164,7 +1332,14 @@
               id="tab-conductor"
               onclick="switchExtraTab('conductor')"
             >
-              🛑 מאמן קצב ושיא
+              🛑 מאמן קצב
+            </button>
+            <button
+              class="extra-tab-btn"
+              id="tab-dice"
+              onclick="switchExtraTab('dice')"
+            >
+              🎲 קובייה
             </button>
           </div>
         </div>
@@ -1225,6 +1400,64 @@
               🔥 התחל מאמן סערה ושיא
             </button>
           </div>
+
+          <div class="extra-panel" id="panel-dice">
+            <p class="tagline" style="margin-bottom: 6px">
+              זרקו את הקובייה — בצעו את התנוחה שנוחתת. 3 דקות, ואז זורקים שוב.
+            </p>
+
+            <div class="dice-scene-wrapper">
+              <div class="dice-scene" id="diceScene">
+                <div class="dice-cube" id="diceCube">
+                  <div class="dice-face face-1">
+                    <div class="dice-face-icon">📐</div>
+                    <div class="dice-face-name">מיסיונרית משודרגת</div>
+                  </div>
+                  <div class="dice-face face-2">
+                    <div class="dice-face-icon">🐎</div>
+                    <div class="dice-face-name">קאוגירל</div>
+                  </div>
+                  <div class="dice-face face-3">
+                    <div class="dice-face-icon">🐕</div>
+                    <div class="dice-face-name">דוגי סטייל</div>
+                  </div>
+                  <div class="dice-face face-4">
+                    <div class="dice-face-icon">🥄</div>
+                    <div class="dice-face-name">ספון</div>
+                  </div>
+                  <div class="dice-face face-5">
+                    <div class="dice-face-icon">🍑</div>
+                    <div class="dice-face-name">קאוגירל הפוכה</div>
+                  </div>
+                  <div class="dice-face face-6">
+                    <div class="dice-face-icon">🧱</div>
+                    <div class="dice-face-name">עמידה מאחור</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dice-result-box" id="diceResultBox">
+              <div class="dice-result-icon" id="diceResultIcon">🎲</div>
+              <div class="dice-result-name" id="diceResultName">זרקו לגלות</div>
+              <div class="dice-result-desc" id="diceResultDesc">
+                לחצו על הכפתור לגלגול
+              </div>
+            </div>
+
+            <button
+              class="btn"
+              id="diceRollBtn"
+              style="
+                width: 100%;
+                background: linear-gradient(135deg, #7928ca, #3b0066);
+                box-shadow: 0 4px 15px rgba(121, 40, 202, 0.4);
+              "
+              onclick="rollDice()"
+            >
+              🎲 זרוק את הקובייה
+            </button>
+          </div>
         </div>
 
         <button
@@ -1246,15 +1479,6 @@
             שלב 1: גישושים וחימום מנועים ✨
           </div>
           <div class="timer-banner" id="timerBanner">⏳ זמן נותר: 10:00</div>
-
-          <div class="dice-banner" id="diceBanner" style="display: none">
-            <div class="dice-item">
-              📍 מיקום אקראי: <span id="diceLocation">מזרן/מיטה</span>
-            </div>
-            <div class="dice-item">
-              ⏱️ הגבלת זמן: <span id="diceDuration">ללא</span>
-            </div>
-          </div>
 
           <div class="turn-indicator" id="turnIndicator">
             התור של: <span id="activePlayerName">שחקן 1</span>
@@ -1304,6 +1528,16 @@
                 <span id="cardIcon">😈</span>
               </div>
               <p class="card-main-text" id="cardText">טוען...</p>
+              <div class="card-dice-row" id="cardDiceRow">
+                <div class="card-dice-pill">
+                  <span class="card-dice-emoji">📍</span>
+                  <span id="cardDiceLocation">מזרן/מיטה</span>
+                </div>
+                <div class="card-dice-pill">
+                  <span class="card-dice-emoji">⏱️</span>
+                  <span id="cardDiceDuration">ללא</span>
+                </div>
+              </div>
               <div class="card-bottom">
                 <span id="cardLevel">רמה: קל</span>
                 <span id="cardCountDisplay">נותרו קלפים</span>
@@ -1652,6 +1886,18 @@
           textF:
             "{turn}, {partner} שוכב על הגב. עלי מעליו כשהגב שלך מופנה אל הפנים שלו (קאוגירל הפוכה). החליקי אותו לתוכך והתחילי לרכוב בקצב ובעומק שמתאימים לך.",
         },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "עינוג עצמי",
+          icon: "👁️",
+          level: "אקסטרים",
+          isAdaptive: true,
+          textM:
+            "{turn}, עניג את עצמך לאט מול {partner} תוך כדי מבט ישיר בעיניים שלה. {partner} אסור לה לגעת בך או בעצמה — רק להביט ולחכות עד שתחליט שהיא מורשית להצטרף.",
+          textF:
+            "{turn}, עניגי את עצמך לאט מול {partner} תוך כדי מבט ישיר בעיניים שלו. {partner} אסור לו לגעת בך או בעצמו — רק להביט ולחכות עד שתחליטי שהוא מורשה להצטרף.",
+        },
       ];
 
       const locationsPool = [
@@ -1682,13 +1928,15 @@
         "ללטף עם קרח 🧊",
       ];
       const rouletteTargets = [
-        "בצוואר 🧣",
-        "בפנים הירך 🦵",
-        "בישבן 🍑",
+        "בפנים הירך הגבוהה 🔥",
         "בתנוך האוזן 👂",
-        "בבטן התחתונה 🤰",
-        "באיבר המין 🔞",
-        "מאחורי הברך 🦵",
+        "בבטן התחתונה 👇",
+        "על הפין — נשיקות וליקוק 🔞",
+        "על הדגדגן והשפתיים האינטימיות 💦",
+        "בפטמות 🔥",
+        "בישבן 🍑",
+        "על האשכים בעדינות 🔞",
+        "בפנים הירך ממש ליד האיבר 🔥",
       ];
 
       let players = ["שחקן 1", "שחקן 2"];
@@ -1985,15 +2233,14 @@
       }
 
       function rollAmbianceDice() {
-        const diceBanner = document.getElementById("diceBanner");
         const randomLoc =
           locationsPool[Math.floor(Math.random() * locationsPool.length)];
         const randomDur =
           durationsPool[Math.floor(Math.random() * durationsPool.length)];
 
-        document.getElementById("diceLocation").innerText = randomLoc;
-        document.getElementById("diceDuration").innerText = randomDur;
-        diceBanner.style.display = "flex";
+        document.getElementById("cardDiceLocation").innerText = randomLoc;
+        document.getElementById("cardDiceDuration").innerText = randomDur;
+        document.getElementById("cardDiceRow").classList.add("visible");
       }
 
       function toggleCardFlip() {
@@ -2009,7 +2256,7 @@
           box.classList.remove("flipped");
           isCardRevealed = false;
           document.getElementById("mainActionBtn").innerText = "שלוף קלף 🃏";
-          document.getElementById("diceBanner").style.display = "none";
+          document.getElementById("cardDiceRow").classList.remove("visible");
           activeIndex = activeIndex === 0 ? 1 : 0;
           updateTurnUI();
         }
@@ -2116,6 +2363,8 @@
         triggerHaptic(card.level);
         if (card.type === "mission") {
           rollAmbianceDice();
+        } else {
+          document.getElementById("cardDiceRow").classList.remove("visible");
         }
 
         const front = document.getElementById("cardFront");
@@ -2220,51 +2469,131 @@
         }, 90);
       }
 
-      function toggleConductor() {
-        const btn = document.getElementById("conductorActionBtn");
+      // ========== נתוני קובייה התנוחות ==========
+      const dicePositions = [
+        {
+          face: 1,
+          icon: "📐",
+          name: "מיסיונרית משודרגת",
+          desc: "כרית מתחת לישבן שלה. חדירה עמוקה עם חיכוך בדגדגן. ידיים אוחזות מאחורה. 3 דקות.",
+          transform: "rotateX(0deg) rotateY(0deg)",
+        },
+        {
+          face: 2,
+          icon: "🐎",
+          name: "קאוגירל",
+          desc: "היא מעל, שולטת בקצב ובעומק לחלוטין. הוא שוכב ונהנה ומלטף את ירכיה. 3 דקות.",
+          transform: "rotateX(0deg) rotateY(180deg)",
+        },
+        {
+          face: 3,
+          icon: "🐕",
+          name: "דוגי סטייל",
+          desc: "היא על ארבע, הוא מאחורה. ידיו אוחזות בירכיה בחוזקה. עומק מקסימלי. 3 דקות.",
+          transform: "rotateX(0deg) rotateY(-90deg)",
+        },
+        {
+          face: 4,
+          icon: "🥄",
+          name: "ספון",
+          desc: "שניהם על הצד, גוף לגוף. חדירה אינטימית וצמודה. נשיקות בעורף. 3 דקות.",
+          transform: "rotateX(0deg) rotateY(90deg)",
+        },
+        {
+          face: 5,
+          icon: "🍑",
+          name: "קאוגירל הפוכה",
+          desc: "היא מעל אבל הפנים שלה לכיוון הרגליים שלו. היא קובעת קצב, הוא נהנה מהנוף. 3 דקות.",
+          transform: "rotateX(-90deg) rotateY(0deg)",
+        },
+        {
+          face: 6,
+          icon: "🧱",
+          name: "עמידה מאחור",
+          desc: "היא נשענת על קיר או משטח, הוא מאחורה צמוד. ידיו אוחזות בירכיה. 3 דקות.",
+          transform: "rotateX(90deg) rotateY(0deg)",
+        },
+      ];
 
-        if (!isConductorRunning) {
-          isConductorRunning = true;
-          btn.innerText = "🛑 עצור את מאמן הקצב";
-          btn.style.background = "transparent";
-          btn.style.border = "2px solid var(--neon-red)";
-          btn.style.color = "var(--neon-red)";
+      let isDiceRolling = false;
 
-          conductorState = "storm";
-          setupConductorPhase();
+      function rollDice() {
+        if (isDiceRolling) return;
+        isDiceRolling = true;
+        triggerHaptic("לוהט");
 
-          conductorTimerInterval = setInterval(() => {
-            conductorSecondsLeft--;
-            document.getElementById("condTimer").innerText =
-              `00:${conductorSecondsLeft < 10 ? "0" + conductorSecondsLeft : conductorSecondsLeft}`;
+        const cube = document.getElementById("diceCube");
+        const btn = document.getElementById("diceRollBtn");
+        const resultBox = document.getElementById("diceResultBox");
 
-            if (conductorSecondsLeft <= 0) {
-              conductorState = conductorState === "storm" ? "freeze" : "storm";
-              setupConductorPhase();
-            }
-          }, 1000);
-        } else {
-          isConductorRunning = false;
-          clearInterval(conductorTimerInterval);
-          document.getElementById("condTimer").innerText = "--:--";
-          document.getElementById("condBox").className =
-            "conductor-box cond-freeze";
-          document.getElementById("condStatus").innerText = "FREEZE";
-          document.getElementById("condStatus").style.color = "var(--ice-blue)";
-          document.getElementById("condDesc").innerText =
-            "עצירה מוחלטת! הישארו בפנים ללא תנועה, הביטו ישירות בעיניים ובנו את המתח המיני.";
+        btn.disabled = true;
+        resultBox.classList.remove("revealed");
 
-          btn.innerText = "🔥 התחל מאמן סערה ושיא";
-          btn.style.background = "var(--neon-red)";
-          btn.style.border = "none";
-          btn.style.color = "white";
-          btn.style.boxShadow = "0 6px 20px var(--neon-glow)";
+        const chosen =
+          dicePositions[Math.floor(Math.random() * dicePositions.length)];
 
-          if (masterGain && audioCtx) {
-            masterGain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+        cube.style.setProperty("--dice-final-transform", chosen.transform);
+        cube.classList.remove("rolling");
+        void cube.offsetWidth; // force reflow
+        cube.classList.add("rolling");
+
+        setTimeout(() => {
+          cube.classList.remove("rolling");
+          cube.style.transform = chosen.transform;
+
+          document.getElementById("diceResultIcon").innerText = chosen.icon;
+          document.getElementById("diceResultName").innerText = chosen.name;
+          document.getElementById("diceResultDesc").innerText = chosen.desc;
+          resultBox.classList.add("revealed");
+
+          triggerHaptic("אקסטרים");
+          btn.disabled = false;
+          isDiceRolling = false;
+        }, 1050);
+      }
+      const btn = document.getElementById("conductorActionBtn");
+
+      if (!isConductorRunning) {
+        isConductorRunning = true;
+        btn.innerText = "🛑 עצור את מאמן הקצב";
+        btn.style.background = "transparent";
+        btn.style.border = "2px solid var(--neon-red)";
+        btn.style.color = "var(--neon-red)";
+
+        conductorState = "storm";
+        setupConductorPhase();
+
+        conductorTimerInterval = setInterval(() => {
+          conductorSecondsLeft--;
+          document.getElementById("condTimer").innerText =
+            `00:${conductorSecondsLeft < 10 ? "0" + conductorSecondsLeft : conductorSecondsLeft}`;
+
+          if (conductorSecondsLeft <= 0) {
+            conductorState = conductorState === "storm" ? "freeze" : "storm";
+            setupConductorPhase();
           }
-          playAmbientPad();
+        }, 1000);
+      } else {
+        isConductorRunning = false;
+        clearInterval(conductorTimerInterval);
+        document.getElementById("condTimer").innerText = "--:--";
+        document.getElementById("condBox").className =
+          "conductor-box cond-freeze";
+        document.getElementById("condStatus").innerText = "FREEZE";
+        document.getElementById("condStatus").style.color = "var(--ice-blue)";
+        document.getElementById("condDesc").innerText =
+          "עצירה מוחלטת! הישארו בפנים ללא תנועה, הביטו ישירות בעיניים ובנו את המתח המיני.";
+
+        btn.innerText = "🔥 התחל מאמן סערה ושיא";
+        btn.style.background = "var(--neon-red)";
+        btn.style.border = "none";
+        btn.style.color = "white";
+        btn.style.boxShadow = "0 6px 20px var(--neon-glow)";
+
+        if (masterGain && audioCtx) {
+          masterGain.gain.setValueAtTime(0.012, audioCtx.currentTime);
         }
+        playAmbientPad();
       }
 
       function setupConductorPhase() {
@@ -2319,7 +2648,7 @@
 
         document.getElementById("cardBox").classList.remove("flipped");
         document.getElementById("mainActionBtn").innerText = "שלוף קלף 🃏";
-        document.getElementById("diceBanner").style.display = "none";
+        document.getElementById("cardDiceRow").classList.remove("visible");
         document.getElementById("p1Input").value = "";
         document.getElementById("p2Input").value = "";
 
