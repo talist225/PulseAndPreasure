@@ -56,16 +56,25 @@
         background: var(--bg-dark);
         color: var(--text-main);
         min-height: 100vh;
+        min-height: 100dvh; /* פתרון החיתוך במובייל */
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start; /* מונע מהחלק העליון להחתך במובייל */
         overflow: hidden;
+      }
+
+      /* החזרת המרכוז רק במסכים גדולים */
+      @media (min-width: 768px) {
+        body {
+          align-items: center;
+        }
       }
 
       .app-container {
         width: 100%;
         max-width: 430px;
         height: 100vh;
+        height: 100dvh; /* פתרון ההסתרה ע"י תפריט ספארי */
         background: var(--bg-luxury);
         position: relative;
         display: flex;
@@ -230,11 +239,17 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        background: var(--bg-luxury);
+        background: transparent; /* שקוף כדי לא להסתיר את צבעי ה-container */
         z-index: 10;
         transition:
           transform 0.5s cubic-bezier(0.19, 1, 0.22, 1),
           opacity 0.5s ease;
+      }
+
+      /* החזרת רקע יוקרתי כברירת מחדל כדי למנוע שקיפות לא רצויה */
+      #splashScreen,
+      #extraGamesScreen {
+        background: var(--bg-luxury);
       }
 
       .screen.hidden {
@@ -260,7 +275,8 @@
         display: flex;
         flex-direction: column;
         gap: 15px;
-        overflow-y: auto;
+        overflow-y: auto; /* מאפשר גלילה חלקה */
+        -webkit-overflow-scrolling: touch; /* גלילה חלקה באייפון */
         padding-right: 4px;
         margin: 15px 0;
       }
@@ -599,7 +615,7 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        margin-bottom: 30px;
+        margin-bottom: env(safe-area-inset-bottom, 0px); /* תמיכה באייפון */
       }
 
       .btn:active {
@@ -646,10 +662,12 @@
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         gap: 20px;
         margin: 15px 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
       .extra-panel {
         width: 100%;
@@ -829,6 +847,7 @@
             border-radius: 14px;
             text-align: center;
             margin: 5px 0 10px 0;
+            flex-shrink: 0;
           "
         >
           <h3
@@ -1095,15 +1114,16 @@
               </label>
             </div>
           </div>
-          <br />
+          <div style="height: 20px"></div>
         </div>
+
         <button class="btn" id="startBtn" onclick="initGame()" disabled>
           התחל את הערב 🔥
         </button>
       </div>
 
       <div class="screen slide-up-hidden" id="extraGamesScreen">
-        <div class="game-header">
+        <div class="game-header" style="flex-shrink: 0">
           <div
             class="stage-tracker stage-chaos"
             style="
@@ -1193,7 +1213,7 @@
         <button
           class="btn btn-sec"
           onclick="closeExtraGames()"
-          style="margin-top: auto"
+          style="margin-top: auto; flex-shrink: 0"
         >
           🔙 חזרה למשחק הקלפים הראשי
         </button>
@@ -1791,7 +1811,6 @@
           let osc = audioCtx.createOscillator();
           let gainNode = audioCtx.createGain();
 
-          // סאונד מעט יותר מחוספס במצב סערה
           osc.type =
             isConductorRunning && conductorState === "storm"
               ? "sawtooth"
@@ -2101,7 +2120,6 @@
         }
       }
 
-      // פונקציות מתחם המשחקים הנוספים והרולטות
       function openExtraGames() {
         if (audioCtx && audioCtx.state === "suspended") {
           audioCtx.resume();
@@ -2118,7 +2136,6 @@
         extraScreen.classList.remove("slide-up-active");
         extraScreen.classList.add("slide-up-hidden");
 
-        // עצירת מאמן הקצב אם הוא פועל כדי להחזיר מוזיקה למצב רגיל
         if (isConductorRunning) {
           toggleConductor();
         }
@@ -2138,7 +2155,6 @@
         triggerHaptic("עדין");
       }
 
-      // מנגנון סיבוב הרולטה
       function spinRoulette() {
         triggerHaptic("עדין");
         const slotAction = document.getElementById("slot-action");
@@ -2160,7 +2176,6 @@
             slotAction.classList.remove("spinning");
             slotTarget.classList.remove("spinning");
 
-            // תוצאה סופית מוחלטת
             const finalAction =
               rouletteActions[
                 Math.floor(Math.random() * rouletteActions.length)
@@ -2177,7 +2192,6 @@
         }, 90);
       }
 
-      // מנגנון ניהול מאמן הקצב ו-Edging קול וסאונד
       function toggleConductor() {
         const btn = document.getElementById("conductorActionBtn");
 
@@ -2231,7 +2245,7 @@
         const condDesc = document.getElementById("condDesc");
 
         if (conductorState === "storm") {
-          conductorSecondsLeft = Math.floor(Math.random() * 21) + 25; // 25-45 שניות סערה
+          conductorSecondsLeft = Math.floor(Math.random() * 21) + 25;
           condBox.className = "conductor-box cond-storm";
           condStatus.innerText = "STORM 🔥";
           condStatus.style.color = "var(--neon-red)";
@@ -2239,12 +2253,11 @@
             "נועו בסערה! חדירה או עינוג בקצב מהיר, עוצמתי ואינטנסיבי במיוחד. תנו למוזיקה להוביל!";
           triggerHaptic("אקסטרים++");
 
-          // הגברת ווליום ושינוי המוזיקה
           if (masterGain && audioCtx) {
             masterGain.gain.setValueAtTime(0.025, audioCtx.currentTime);
           }
         } else {
-          conductorSecondsLeft = Math.floor(Math.random() * 11) + 15; // 15-25 שניות עצירה קפואה
+          conductorSecondsLeft = Math.floor(Math.random() * 11) + 15;
           condBox.className = "conductor-box cond-freeze";
           condStatus.innerText = "FREEZE 🛑";
           condStatus.style.color = "var(--ice-blue)";
@@ -2252,7 +2265,6 @@
             "עצרו לחלוטין! להישאר בפנים מבלי לזוז מילימטר. לנשום עמוק יחד, להביט בעיניים עד הפעימה הבאה.";
           triggerHaptic("לוהט");
 
-          // הנמכת ווליום רכה לעצירה
           if (masterGain && audioCtx) {
             masterGain.gain.setValueAtTime(0.008, audioCtx.currentTime);
           }
@@ -2290,7 +2302,6 @@
 
         document.getElementById("timerBanner").style.display = "none";
 
-        // אתחול כפתור המאמן
         const btn = document.getElementById("conductorActionBtn");
         btn.innerText = "🔥 התחל מאמן סערה ושיא";
         btn.style.background = "var(--neon-red)";
@@ -2308,8 +2319,12 @@
         filterDeck("all");
         updateStageUI();
 
-        document.getElementById("extraGamesScreen").className =
-          "screen slide-up-hidden";
+        document
+          .getElementById("extraGamesScreen")
+          .classList.add("slide-up-hidden");
+        document
+          .getElementById("extraGamesScreen")
+          .classList.remove("slide-up-active");
         document.getElementById("splashScreen").classList.remove("hidden");
 
         document.getElementById("accord-phone").checked = false;
@@ -2318,20 +2333,17 @@
         updateAmbientBackground(false);
       }
 
-      // תוקף את כפתור ההתחלה רק אם שני התנאים בחוזה מסומנים
       function validateAccord() {
         const chk1 = document.getElementById("accord-phone").checked;
         const chk2 = document.getElementById("accord-flow").checked;
         document.getElementById("startBtn").disabled = !(chk1 && chk2);
       }
 
-      // מנהל את שינוי הרקע האווירתי בצורה דינמית וחלקלקה
       function updateAmbientBackground(isPleasureZone = false) {
-        const container = document.querySelector(".app-container");
-        if (!container) return;
+        const el = document.body;
+        if (!el) return;
 
-        // הסרת מחלקות קודמות
-        container.classList.remove(
+        el.classList.remove(
           "bg-stage-1",
           "bg-stage-2",
           "bg-stage-3",
@@ -2339,12 +2351,11 @@
         );
 
         if (isPleasureZone) {
-          container.classList.add("bg-pleasure-zone");
+          el.classList.add("bg-pleasure-zone");
         } else {
-          // שליפת השלב הנוכחי מתוך המשתנה הגלובלי שלך
           const stage =
             typeof currentGameStage !== "undefined" ? currentGameStage : 1;
-          container.classList.add("bg-stage-" + stage);
+          el.classList.add("bg-stage-" + stage);
         }
       }
     </script>
