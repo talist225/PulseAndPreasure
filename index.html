@@ -225,22 +225,17 @@
         left: 0;
         width: 100%;
         height: 100%;
-        /* שימוש בגובה דינמי למניעת הסתרה ע"י תפריטי דפדפן במובייל */
-        height: 100dvh;
-        padding: 20px;
-        box-sizing: border-box;
+        padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        background: var(--bg-luxury);
+        z-index: 10;
         transition:
-          transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 0.5s cubic-bezier(0.19, 1, 0.22, 1),
           opacity 0.5s ease;
-        /* מאפשר גלילה פנימית חלקה אם התוכן ארוך מהמסך במוביילים קטנים */
-        overflow-y: auto;
-        -webkit-overflow-scrolling: touch;
       }
 
-      /* החזרת הגובה הרגיל כאשר האפליקציה מוצגת בתוך קפסולה במסכים גדולים */
       @media (min-width: 768px) {
         .screen {
           height: 100%;
