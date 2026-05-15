@@ -809,10 +809,8 @@
       }
 
       @media (max-width: 767px) {
-        #gameBoardScreen,
-        #extraGamesScreen {
-          /* מוסיף ריווח של 30 פיקסלים + מתחשב בפס הלבן של האייפון בתחתית */
-          padding-bottom: calc(30px + env(safe-area-inset-bottom, 15px));
+        .action-area {
+          margin-bottom: 35px !important;
         }
       }
     </style>
