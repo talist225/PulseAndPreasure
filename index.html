@@ -807,6 +807,14 @@
           box-shadow: 0 0 20px rgba(255, 0, 60, 0.15);
         }
       }
+
+      @media (max-width: 767px) {
+        #gameBoardScreen,
+        #extraGamesScreen {
+          /* מוסיף ריווח של 30 פיקסלים + מתחשב בפס הלבן של האייפון בתחתית */
+          padding-bottom: calc(30px + env(safe-area-inset-bottom, 15px));
+        }
+      }
     </style>
   </head>
   <body>
@@ -1290,7 +1298,7 @@
         <button class="btn" id="mainActionBtn" onclick="handleMainAction()">
           שלוף קלף 🃏
         </button>
-        <div style="display: flex; gap: 8px; width: 100%; margin-bottom: 10px">
+        <div style="display: flex; gap: 8px; width: 100%">
           <button
             class="btn btn-sec"
             style="flex: 1"
