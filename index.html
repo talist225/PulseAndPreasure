@@ -4,16 +4,13 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-
-    <title>SpeeDate Premium</title>
-
+    <title>Pulse & Pleasure</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&family=Secular+One&display=swap"
       rel="stylesheet"
     />
-
     <style>
       :root {
         --bg-dark: #070204;
@@ -23,265 +20,507 @@
           #1a030d 50%,
           #050103 100%
         );
-
-        --neon-red: #ff0048;
+        --neon-red: #ff003c;
+        --neon-glow: rgba(255, 0, 60, 0.5);
         --gold: #d4af37;
+        --gold-glow: rgba(212, 175, 55, 0.4);
         --text-main: #fff5f7;
 
-        --card-flirt: linear-gradient(135deg, #ff5f6d, #ffc371);
-        --card-tease: linear-gradient(135deg, #ff416c, #ff4b2b);
-        --card-intimacy: linear-gradient(135deg, #7f00ff, #e100ff);
-        --card-hot: linear-gradient(135deg, #ff003c, #660011);
-        --card-funny: linear-gradient(135deg, #00c6ff, #0072ff);
-        --card-special: linear-gradient(135deg, #f59e0b, #92400e);
+        --card-mission: linear-gradient(135deg, #ff0044 0%, #660011 100%);
+        --card-reaction: linear-gradient(135deg, #7928ca 0%, #3b0066 100%);
+        --card-bonus: linear-gradient(135deg, #f59e0b 0%, #92400e 100%);
+
+        --stage-1-color: #ec4899;
+        --stage-2-color: #a855f7;
+        --stage-3-color: #ff003c;
+
+        --ice-blue: #00f0ff;
+        --ice-glow: rgba(0, 240, 255, 0.5);
       }
 
       * {
+        box-sizing: border-box;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-        font-family: "Assistant", sans-serif;
+        font-family: "Heebo", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
       }
 
       body {
         background: var(--bg-dark);
+        color: var(--text-main);
         min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
         overflow: hidden;
-        color: white;
       }
 
-      .app {
+      .app-container {
         width: 100%;
         max-width: 430px;
         height: 100vh;
         background: var(--bg-luxury);
-        padding: 22px;
+        position: relative;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        position: relative;
+        padding: 20px 24px;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
         overflow: hidden;
+        transition:
+          background 1s ease,
+          box-shadow 1s ease;
       }
 
-      .title {
+      /* סטייטים של רקעים דינמיים לפי שלב */
+      .bg-stage-1 {
+        background: linear-gradient(
+          135deg,
+          #0f040a 0%,
+          #220515 50%,
+          #070104 100%
+        ) !important;
+      }
+      .bg-stage-2 {
+        background: linear-gradient(
+          135deg,
+          #130315 0%,
+          #2b0536 50%,
+          #08010b 100%
+        ) !important;
+      }
+      .bg-stage-3 {
+        background: linear-gradient(
+          135deg,
+          #1a0207 0%,
+          #3d020e 50%,
+          #0a0003 100%
+        ) !important;
+      }
+      /* מתחם העונג - חושך מוחלט עם גלואו אדום פנימי */
+      .bg-pleasure-zone {
+        background: #000000 !important;
+        box-shadow:
+          inset 0 0 40px rgba(255, 0, 60, 0.35),
+          0 0 50px rgba(0, 0, 0, 0.9) !important;
+      }
+
+      /* עיצוב כפתור התחלה חסום */
+      .btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        box-shadow: none;
+        transform: none !important;
+      }
+
+      .app-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        font-family: "Secular One", sans-serif;
+        font-size: 3rem;
+        font-weight: normal;
         text-align: center;
-        font-size: 2.6rem;
-        font-weight: 800;
         background: linear-gradient(90deg, var(--neon-red), var(--gold));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px rgba(255, 0, 60, 0.3);
+        letter-spacing: 1px;
+        margin-bottom: 5px;
       }
 
-      .subtitle {
+      .badge-18 {
+        display: inline-flex;
+        width: 42px;
+        height: 42px;
+        color: var(--neon-red);
+        -webkit-text-fill-color: initial;
+        filter: drop-shadow(0 0 8px var(--neon-glow));
+        animation: adultPulse 2s infinite ease-in-out;
+      }
+
+      .stage-tracker {
         text-align: center;
-        color: #c7b9be;
-        margin-top: 5px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.95rem;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        transition: all 0.5s ease;
+        margin-bottom: 5px;
+      }
+
+      .stage-1 {
+        background: rgba(236, 72, 153, 0.15);
+        border: 1px solid var(--stage-1-color);
+        color: var(--stage-1-color);
+      }
+      .stage-2 {
+        background: rgba(168, 85, 247, 0.15);
+        border: 1px solid var(--stage-2-color);
+        color: var(--stage-2-color);
+      }
+      .stage-3 {
+        background: rgba(255, 0, 60, 0.15);
+        border: 1px solid var(--stage-3-color);
+        color: var(--stage-3-color);
+        text-shadow: 0 0 5px var(--neon-glow);
+      }
+      .stage-chaos {
+        background: rgba(212, 175, 55, 0.15);
+        border: 1px solid var(--gold);
+        color: var(--gold);
+      }
+
+      .timer-banner {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px dashed var(--neon-red);
+        padding: 6px;
+        border-radius: 12px;
+        text-align: center;
+        font-weight: 700;
+        color: #fff;
+        font-size: 1.1rem;
+        display: none;
+        margin-bottom: 5px;
+        box-shadow: 0 0 10px rgba(255, 0, 60, 0.2);
+      }
+
+      .dice-banner {
+        display: flex;
+        justify-content: space-around;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 6px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      .dice-item {
+        color: var(--gold);
       }
 
       .screen {
         position: absolute;
-        inset: 0;
-        background: var(--bg-luxury);
-        z-index: 5;
-        padding: 28px 22px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        transition: 0.5s;
+        background: var(--bg-luxury);
+        z-index: 10;
+        transition:
+          transform 0.5s cubic-bezier(0.19, 1, 0.22, 1),
+          opacity 0.5s ease;
       }
 
       .screen.hidden {
+        transform: translateY(-100%);
         opacity: 0;
         pointer-events: none;
-        transform: translateY(-100%);
       }
 
-      .inputs {
+      /* מסך משחקים נוספים גולש מלמטה למעלה */
+      .screen.slide-up-hidden {
+        transform: translateY(100%);
+        opacity: 0;
+        pointer-events: none;
+      }
+      .screen.slide-up-active {
+        transform: translateY(0);
+        opacity: 1;
+        z-index: 20;
+      }
+
+      .splash-content {
+        flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 18px;
+        gap: 15px;
+        overflow-y: auto;
+        padding-right: 4px;
+        margin: 15px 0;
+      }
+
+      .splash-content::-webkit-scrollbar {
+        width: 0px;
+      }
+
+      .tagline {
+        text-align: center;
+        font-size: 1rem;
+        color: #b3a2a7;
+        font-weight: 300;
       }
 
       .input-group {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 12px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
-      label {
-        color: var(--neon-red);
+      .input-group label {
+        font-size: 0.9rem;
         font-weight: 700;
+        color: var(--neon-red);
+        text-transform: uppercase;
       }
 
-      input {
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        background: rgba(255, 255, 255, 0.05);
-        padding: 16px;
-        border-radius: 14px;
-        color: white;
+      .input-group input {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 0, 60, 0.2);
+        padding: 10px;
+        border-radius: 10px;
+        color: #fff;
         font-size: 1rem;
+        font-weight: 600;
         outline: none;
         text-align: center;
       }
 
-      .btn {
-        border: none;
+      .gender-selector {
+        display: flex;
+        gap: 10px;
+        margin-top: 2px;
+      }
+
+      .gender-btn {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #b3a2a7;
+        padding: 8px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .gender-btn.active {
         background: var(--neon-red);
         color: white;
-        border-radius: 16px;
-        padding: 18px;
-        font-size: 1.1rem;
-        font-weight: 800;
-        cursor: pointer;
-        transition: 0.2s;
+        border-color: var(--neon-red);
+        box-shadow: 0 0 10px var(--neon-glow);
       }
 
-      .btn:active {
-        transform: scale(0.97);
+      .audio-toggle-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(212, 175, 55, 0.05);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        padding: 12px;
+        border-radius: 12px;
+      }
+      .audio-toggle-title {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--gold);
       }
 
-      .top {
+      .modes-grid {
         display: flex;
         flex-direction: column;
-        gap: 14px;
+        gap: 8px;
       }
 
-      .turn {
+      .mode-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .mode-card.active {
+        border-color: var(--gold);
+        background: rgba(212, 175, 55, 0.08);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+      }
+
+      .mode-header-line {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
+
+      .mode-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #fff;
+      }
+
+      .mode-card.active .mode-title {
+        color: var(--gold);
+      }
+
+      .mode-desc {
+        font-size: 0.82rem;
+        color: #a49398;
+        line-height: 1.35;
+      }
+
+      .timer-config {
+        display: none;
+        gap: 8px;
+        margin-top: 6px;
+        justify-content: center;
+      }
+
+      .time-opt {
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 30px;
-        padding: 12px;
-        text-align: center;
-        font-weight: 700;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        color: #fff;
+        font-weight: 600;
       }
 
-      .turn span {
-        color: var(--neon-red);
+      .time-opt.active {
+        background: var(--neon-red);
+        border-color: var(--neon-red);
       }
 
-      .progress-wrap {
+      .game-header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
         width: 100%;
       }
 
-      .progress-label {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 8px;
-        font-size: 0.9rem;
-      }
-
-      .progress {
-        height: 12px;
+      .turn-indicator {
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 8px;
         border-radius: 30px;
-        background: rgba(255, 255, 255, 0.08);
-        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
-      .progress-bar {
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #ff0048, #ff8c42);
-        transition: 0.4s;
+      .turn-indicator span {
+        color: var(--neon-red);
+        text-shadow: 0 0 10px var(--neon-glow);
       }
 
       .filters {
         display: flex;
-        gap: 6px;
-        overflow-x: auto;
+        gap: 4px;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 4px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
-      .filters button {
+      .filter-btn {
+        flex: 1;
+        background: transparent;
         border: none;
-        padding: 10px 12px;
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.05);
-        color: white;
+        color: #8c7a80;
+        padding: 8px 2px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        border-radius: 20px;
         cursor: pointer;
-        white-space: nowrap;
+        transition: all 0.3s ease;
       }
 
-      .filters button.active {
-        background: rgba(255, 0, 72, 0.25);
+      .filter-btn.active {
+        color: #fff;
+        background: rgba(255, 0, 60, 0.2);
+        border: 1px solid rgba(255, 0, 60, 0.4);
+        box-shadow: 0 0 10px var(--neon-glow);
       }
 
-      .deck {
+      .deck-area {
         flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
         perspective: 1000px;
+        margin: 10px 0;
       }
 
-      .card {
+      .card-box {
         width: 100%;
-        height: 440px;
+        height: 390px;
         position: relative;
         transform-style: preserve-3d;
-        transition: transform 0.6s;
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        cursor: pointer;
       }
 
-      .card.flipped {
+      .card-box.flipped {
         transform: rotateY(180deg);
       }
 
-      .side {
+      .card-side {
         position: absolute;
-        inset: 0;
-        border-radius: 28px;
-        padding: 24px;
+        width: 100%;
+        height: 100%;
         backface-visibility: hidden;
+        border-radius: 24px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.08);
       }
 
-      .back {
-        background: #100208;
-        border: 2px solid rgba(255, 0, 72, 0.4);
-        justify-content: center;
+      .card-back-side {
+        background: #0f0307;
+        border: 2px solid var(--neon-red);
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        text-align: center;
+        justify-content: center;
+        box-shadow: 0 0 35px rgba(255, 0, 60, 0.2);
       }
 
-      .back .emoji {
+      .card-back-side .icon {
         font-size: 4rem;
-        animation: pulse 2s infinite;
+        animation: heartPulse 2s infinite ease-in-out;
       }
 
-      .back p {
-        margin-top: 20px;
-        color: #ff7f9e;
+      .card-back-side .prompt {
+        margin-top: 15px;
+        font-size: 0.95rem;
         font-weight: 700;
+        color: var(--neon-red);
+        letter-spacing: 2px;
       }
 
-      .front {
+      .card-front-side {
         transform: rotateY(180deg);
       }
-
-      .front.flirt {
-        background: var(--card-flirt);
+      .card-front-side.mission {
+        background: var(--card-mission);
       }
-
-      .front.tease {
-        background: var(--card-tease);
+      .card-front-side.reaction {
+        background: var(--card-reaction);
       }
-
-      .front.intimacy {
-        background: var(--card-intimacy);
-      }
-
-      .front.hot {
-        background: var(--card-hot);
-      }
-
-      .front.funny {
-        background: var(--card-funny);
-      }
-
-      .front.special {
-        background: var(--card-special);
+      .card-front-side.bonus {
+        background: var(--card-bonus);
       }
 
       .card-top {
@@ -290,512 +529,1808 @@
         align-items: center;
       }
 
-      .tag {
+      .card-tag {
         background: rgba(255, 255, 255, 0.15);
-        padding: 8px 14px;
+        backdrop-filter: blur(10px);
+        padding: 4px 12px;
         border-radius: 20px;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 800;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.25);
       }
 
-      .text {
-        font-size: 1.45rem;
-        text-align: center;
-        line-height: 1.6;
+      .card-main-text {
+        font-size: 1.25rem;
+        line-height: 1.5;
         font-weight: 700;
+        text-align: center;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        max-height: 230px;
+        overflow-y: auto;
+        padding: 5px;
       }
 
-      .bottom {
+      .card-main-text::-webkit-scrollbar {
+        width: 0px;
+      }
+
+      .card-bottom {
         display: flex;
         justify-content: space-between;
-        opacity: 0.8;
-        font-size: 0.85rem;
+        font-size: 0.78rem;
+        opacity: 0.7;
+        font-weight: 600;
       }
 
-      .actions {
+      .action-area {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+      }
+
+      .btn {
+        background: var(--neon-red);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 16px;
+        font-size: 1.15rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 6px 20px var(--neon-glow);
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn-sec {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        color: #b3a2a7;
+        box-shadow: none;
+        font-size: 0.9rem;
+        padding: 12px;
+      }
+
+      /* עיצובים ייעודיים למסך המשחקים הנוספים והרולטה */
+      .extra-menu-tabs {
+        display: flex;
+        gap: 8px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 4px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .extra-tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #a49398;
+        padding: 10px;
+        font-size: 0.9rem;
+        font-weight: 800;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .extra-tab-btn.active {
+        background: rgba(212, 175, 55, 0.12);
+        color: var(--gold);
+        border: 1px solid var(--gold);
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+      }
+
+      .extra-content-view {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin: 15px 0;
+      }
+      .extra-panel {
+        width: 100%;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .extra-panel.active {
+        display: flex;
+      }
+
+      /* רולטת התשוקה */
+      .roulette-container {
         display: flex;
         flex-direction: column;
         gap: 12px;
+        width: 100%;
+      }
+      .roulette-slot {
+        background: #12050b;
+        border: 2px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #fff;
+        box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+        transition: all 0.3s ease;
+      }
+      .roulette-slot.spinning {
+        border-color: var(--gold);
+        box-shadow:
+          0 0 15px var(--gold-glow),
+          inset 0 0 15px rgba(212, 175, 55, 0.2);
+        color: #ffda6a;
+      }
+      .roulette-label {
+        font-size: 0.75rem;
+        color: var(--gold);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+        font-weight: 900;
       }
 
-      .secondary {
-        background: transparent;
+      /* מאמן קצב ו-Edging */
+      .conductor-box {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.02);
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 30px 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        transition: all 0.5s ease;
+      }
+      .conductor-status {
+        font-size: 2.8rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-shadow: 0 0 25px currentColor;
+        transition: all 0.5s ease;
+      }
+      .conductor-desc {
+        font-size: 1.1rem;
+        color: #fff;
+        line-height: 1.5;
+        font-weight: 700;
+        min-height: 50px;
+      }
+      .conductor-timer {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 6px 16px;
+        border-radius: 30px;
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      @keyframes pulse {
+      /* עיצובי מצבים דינמיים למאמן */
+      .cond-storm {
+        border-color: var(--neon-red);
+        background: rgba(255, 0, 60, 0.05);
+        box-shadow: 0 0 30px rgba(255, 0, 60, 0.2);
+        animation: stormPulse 1.5s infinite ease-in-out;
+      }
+      .cond-freeze {
+        border-color: var(--ice-blue);
+        background: rgba(0, 240, 255, 0.05);
+        box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+      }
+
+      @keyframes heartPulse {
         0% {
           transform: scale(1);
+          filter: drop-shadow(0 0 10px rgba(255, 0, 60, 0.5));
         }
         50% {
-          transform: scale(1.08);
+          transform: scale(1.04);
+          filter: drop-shadow(0 0 20px rgba(255, 0, 60, 0.8));
         }
         100% {
           transform: scale(1);
+          filter: drop-shadow(0 0 10px rgba(255, 0, 60, 0.5));
+        }
+      }
+
+      @keyframes adultPulse {
+        0% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 6px rgba(255, 0, 60, 0.6));
+        }
+        50% {
+          transform: scale(1.08);
+          filter: drop-shadow(0 0 15px rgba(255, 0, 60, 0.9));
+        }
+        100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 6px rgba(255, 0, 60, 0.6));
+        }
+      }
+
+      @keyframes stormPulse {
+        0% {
+          box-shadow: 0 0 20px rgba(255, 0, 60, 0.15);
+        }
+        50% {
+          box-shadow: 0 0 35px rgba(255, 0, 60, 0.35);
+        }
+        100% {
+          box-shadow: 0 0 20px rgba(255, 0, 60, 0.15);
         }
       }
     </style>
   </head>
-
   <body>
-    <div class="app">
-      <!-- START SCREEN -->
-
-      <div class="screen" id="startScreen">
-        <div>
-          <h1 class="title">SpeeDate</h1>
-          <p class="subtitle">
-            מתח עולה. פלירטוט. אינטימיות. והכל זורם טבעי.
+    <div class="app-container">
+      <div class="screen" id="splashScreen">
+        <h1 class="app-title">
+          <span class="badge-18">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="8"
+              />
+              <text
+                x="50"
+                y="58"
+                font-family="'Heebo', sans-serif"
+                font-size="34"
+                font-weight="900"
+                fill="currentColor"
+                text-anchor="middle"
+              >
+                18+
+              </text>
+            </svg>
+          </span>
+          Pulse & Pleasure
+        </h1>
+        <p class="tagline">מכבים מסכים. מתחילים לאט, מגיעים לשיא.</p>
+        <div
+          style="
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 0, 60, 0.15);
+            padding: 12px 14px;
+            border-radius: 14px;
+            text-align: center;
+            margin: 5px 0 10px 0;
+          "
+        >
+          <h3
+            style="
+              font-size: 0.95rem;
+              color: var(--gold);
+              margin-bottom: 4px;
+              font-weight: 800;
+            "
+          >
+            מה מחכה לנו כאן?
+          </h3>
+          <p style="font-size: 0.85rem; color: #b3a2a7; line-height: 1.45">
+            חוויה זוגית של מתח נבנה (Slow Burn) בשלושה שלבים – מגישושים עדינים
+            ועד לעונג ושיא משותף. בכל שלב תוכלו לעבור ל<b>מתחם העונג</b> לרולטת
+            מגע או למאמן קצב.
           </p>
         </div>
 
-        <div class="inputs">
+        <div class="splash-content">
           <div class="input-group">
             <label>שחקן 1</label>
-            <input id="p1" placeholder="הכנס שם..." />
+            <input type="text" id="p1Input" value="" placeholder="הכנס שם..." />
+            <div class="gender-selector">
+              <button
+                class="gender-btn active"
+                id="p1-m"
+                onclick="setGender(1, 'M')"
+              >
+                זכר ♂
+              </button>
+              <button class="gender-btn" id="p1-f" onclick="setGender(1, 'F')">
+                נקבה ♀
+              </button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label>שחקן 2</label>
+            <input type="text" id="p2Input" value="" placeholder="הכנס שם..." />
+            <div class="gender-selector">
+              <button class="gender-btn" id="p2-m" onclick="setGender(2, 'M')">
+                זכר ♂
+              </button>
+              <button
+                class="gender-btn active"
+                id="p2-f"
+                onclick="setGender(2, 'F')"
+              >
+                נקבה ♀
+              </button>
+            </div>
+          </div>
+
+          <div class="audio-toggle-container">
+            <span class="audio-toggle-title"
+              >🎵 הפעלת מוזיקת רקע חושנית ורכה</span
+            >
+            <div
+              class="gender-selector"
+              style="margin: 0; width: auto; gap: 5px"
+            >
+              <button
+                class="gender-btn active"
+                id="audio-on"
+                onclick="toggleAudioSetting(true)"
+                style="padding: 6px 12px"
+              >
+                כן
+              </button>
+              <button
+                class="gender-btn"
+                id="audio-off"
+                onclick="toggleAudioSetting(false)"
+                style="padding: 6px 12px"
+              >
+                לא
+              </button>
+            </div>
           </div>
 
           <div class="input-group">
-            <label>שחקן 2</label>
-            <input id="p2" placeholder="הכנס שם..." />
+            <label>בחרו את קצב הערב 🎮</label>
+            <div class="modes-grid">
+              <div
+                class="mode-card active"
+                id="mode-slow"
+                onclick="selectGameMode('slow')"
+              >
+                <div class="mode-header-line">
+                  <div class="mode-title">🍷 חימום איטי (Slow Burn)</div>
+                </div>
+                <div class="mode-desc">
+                  חוויה מלאה ומעמיקה. המשחק יעביר אתכם בצורה מבוקרת ויסודית דרך
+                  כל שלבי החימום, המגע והמתח המיני עד לשיא הנועז.
+                </div>
+              </div>
+              <div
+                class="mode-card"
+                id="mode-express"
+                onclick="selectGameMode('express')"
+              >
+                <div class="mode-header-line">
+                  <div class="mode-title">🚀 מסלול אקספרס (Fast Track)</div>
+                </div>
+                <div class="mode-desc">
+                  קצר וקולע. רק 3 קלפים אקראיים משלב 1, עוד 3 קלפים משלב 2 –
+                  ומשם טסים ישירות ומהר מאוד לשלב 3 הלוהט.
+                </div>
+              </div>
+              <div
+                class="mode-card"
+                id="mode-peak"
+                onclick="selectGameMode('peak')"
+              >
+                <div class="mode-header-line">
+                  <div class="mode-title">
+                    🔥 לילה בלי חוקים (Direct to Peak)
+                  </div>
+                </div>
+                <div class="mode-desc">
+                  מדלגים על הגישושים! המשחק זורק אתכם מהרגע הראשון ישר לתוך שלב
+                  3 האקסטרימי: משימות מיניות מפורשות, תנוחות נועזות ועירום.
+                </div>
+              </div>
+              <div
+                class="mode-card"
+                id="mode-chaos"
+                onclick="selectGameMode('chaos')"
+              >
+                <div class="mode-header-line">
+                  <div class="mode-title">
+                    🎲 רולטת כאוס (Unpredictable Chaos)
+                  </div>
+                </div>
+                <div class="mode-desc">
+                  חוסר ידיעה מוחלט. כל השלבים מעורבבים יחד בסיפון אחד. שחקן אחד
+                  יכול לקבל נשיקה בלחי, והבא אחריו ישלוף משימה אנטומית פרועה!
+                </div>
+              </div>
+              <div
+                class="mode-card"
+                id="mode-timer"
+                onclick="selectGameMode('timer')"
+              >
+                <div class="mode-header-line">
+                  <div class="mode-title">⏱️ אתגר השעון (Beat the Clock)</div>
+                </div>
+                <div class="mode-desc">
+                  הזמן קוצב את רמת החרמנות! השלבים ישתנו אוטומטית לפי הדקות
+                  שעוברות. ככל שהטיימר מתקרב לאפס, הקלפים יהפכו לפרועים יותר.
+                </div>
+                <div
+                  class="timer-config"
+                  id="timerConfig"
+                  onclick="event.stopPropagation()"
+                >
+                  <button
+                    class="time-opt active"
+                    id="t-10"
+                    onclick="setTimerDuration(10)"
+                  >
+                    10 דק׳
+                  </button>
+                  <button
+                    class="time-opt"
+                    id="t-20"
+                    onclick="setTimerDuration(20)"
+                  >
+                    20 דק׳
+                  </button>
+                  <button
+                    class="time-opt"
+                    id="t-30"
+                    onclick="setTimerDuration(30)"
+                  >
+                    30 דק׳
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
+          <div
+            class="input-group"
+            style="
+              border-color: rgba(212, 175, 55, 0.2);
+              background: rgba(212, 175, 55, 0.02);
+            "
+          >
+            <label
+              style="
+                color: var(--gold);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.85rem;
+              "
+              >📜 חוזה התשוקה הזוגי</label
+            >
+            <div
+              style="
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 6px;
+                text-align: right;
+              "
+            >
+              <label
+                style="
+                  font-size: 0.85rem;
+                  color: #fff5f7;
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 8px;
+                  font-weight: normal;
+                  cursor: pointer;
+                  line-height: 1.3;
+                "
+              >
+                <input
+                  type="checkbox"
+                  id="accord-phone"
+                  onchange="validateAccord()"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    margin-top: 2px;
+                    cursor: pointer;
+                    accent-color: var(--neon-red);
+                  "
+                />
+                <span
+                  >מניחים את הטלפונים האחרים בצד ומתרכזים רק זה בזה הלילה.</span
+                >
+              </label>
+              <label
+                style="
+                  font-size: 0.85rem;
+                  color: #fff5f7;
+                  display: flex;
+                  align-items: flex-start;
+                  gap: 8px;
+                  font-weight: normal;
+                  cursor: pointer;
+                  line-height: 1.3;
+                "
+              >
+                <input
+                  type="checkbox"
+                  id="accord-flow"
+                  onchange="validateAccord()"
+                  style="
+                    width: 16px;
+                    height: 16px;
+                    margin-top: 2px;
+                    cursor: pointer;
+                    accent-color: var(--neon-red);
+                  "
+                />
+                <span
+                  >מתחייבים לזרום, להעז, ולא לעצור עד ששנינו נגיע לסיפוק
+                  מלא.</span
+                >
+              </label>
+            </div>
+          </div>
+          <br />
         </div>
-
-        <button class="btn" onclick="startGame()">
-          התחל משחק 🔥
+        <button class="btn" id="startBtn" onclick="initGame()" disabled>
+          התחל את הערב 🔥
         </button>
       </div>
 
-      <!-- GAME -->
-
-      <div class="top">
-        <div class="turn">
-          התור של:
-          <span id="turnName">שחקן 1</span>
+      <div class="screen slide-up-hidden" id="extraGamesScreen">
+        <div class="game-header">
+          <div
+            class="stage-tracker stage-chaos"
+            style="
+              color: var(--gold);
+              border-color: var(--gold);
+              background: rgba(212, 175, 55, 0.1);
+            "
+          >
+            🔥 מתחם העונג המשלימים והשיא
+          </div>
+          <div class="extra-menu-tabs">
+            <button
+              class="extra-tab-btn active"
+              id="tab-roulette"
+              onclick="switchExtraTab('roulette')"
+            >
+              🎰 רולטת מגע
+            </button>
+            <button
+              class="extra-tab-btn"
+              id="tab-conductor"
+              onclick="switchExtraTab('conductor')"
+            >
+              🛑 מאמן קצב ושיא
+            </button>
+          </div>
         </div>
 
-        <div class="progress-wrap">
-          <div class="progress-label">
-            <span>מד מתח</span>
-            <span id="stageText">פלירטוט</span>
+        <div class="extra-content-view">
+          <div class="extra-panel active" id="panel-roulette">
+            <p class="tagline" style="margin-bottom: 10px">
+              סובבו את הגלגל ובצעו את השילוב החושני שנוצר מיד.
+            </p>
+            <div class="roulette-container">
+              <div>
+                <div class="roulette-label">הפעולה שתבצעו:</div>
+                <div class="roulette-slot" id="slot-action">לנשק חם 💋</div>
+              </div>
+              <div>
+                <div class="roulette-label">האיזור בגוף:</div>
+                <div class="roulette-slot" id="slot-target">בצוואר 🧣</div>
+              </div>
+            </div>
+            <button
+              class="btn"
+              style="
+                background: linear-gradient(135deg, var(--gold), #92710e);
+                box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+                width: 100%;
+                margin-top: 15px;
+              "
+              onclick="spinRoulette()"
+            >
+              🎰 סובב את גלגל התשוקה
+            </button>
           </div>
 
-          <div class="progress">
-            <div class="progress-bar" id="progressBar"></div>
+          <div class="extra-panel" id="panel-conductor">
+            <p class="tagline" style="margin-bottom: 10px">
+              עברו לחדירה או עינוג אינטנסיבי. המכשיר יכתיב את הקצב עד הגמירה.
+            </p>
+            <div class="conductor-box cond-freeze" id="condBox">
+              <div
+                class="conductor-status"
+                id="condStatus"
+                style="color: var(--ice-blue)"
+              >
+                FREEZE
+              </div>
+              <div class="conductor-desc" id="condDesc">
+                עצירה מוחלטת! הישארו בפנים ללא תנועה, הביטו ישירות בעיניים ובנו
+                את המתח המיני.
+              </div>
+              <div class="conductor-timer" id="condTimer">--:--</div>
+            </div>
+            <button
+              class="btn"
+              id="conductorActionBtn"
+              style="width: 100%"
+              onclick="toggleConductor()"
+            >
+              🔥 התחל מאמן סערה ושיא
+            </button>
           </div>
+        </div>
+
+        <button
+          class="btn btn-sec"
+          onclick="closeExtraGames()"
+          style="margin-top: auto"
+        >
+          🔙 חזרה למשחק הקלפים הראשי
+        </button>
+      </div>
+
+      <div class="game-header">
+        <div class="stage-tracker stage-1" id="stageTracker">
+          שלב 1: גישושים וחימום מנועים ✨
+        </div>
+        <div class="timer-banner" id="timerBanner">⏳ זמן נותר: 10:00</div>
+
+        <div class="dice-banner" id="diceBanner" style="display: none">
+          <div class="dice-item">
+            📍 מיקום אקראי: <span id="diceLocation">מזרן/מיטה</span>
+          </div>
+          <div class="dice-item">
+            ⏱️ הגבלת זמן: <span id="diceDuration">ללא</span>
+          </div>
+        </div>
+
+        <div class="turn-indicator" id="turnIndicator">
+          התור של: <span id="activePlayerName">שחקן 1</span>
         </div>
 
         <div class="filters">
-          <button class="active" onclick="setFilter('all', this)">
+          <button
+            class="filter-btn active"
+            id="f-all"
+            onclick="filterDeck('all')"
+          >
             הכל
           </button>
-
-          <button onclick="setFilter('flirt', this)">
-            😏 פלירטוט
+          <button
+            class="filter-btn"
+            id="f-mission"
+            onclick="filterDeck('mission')"
+          >
+            😈 משימות
           </button>
-
-          <button onclick="setFilter('tease', this)">
-            🔥 טיזינג
+          <button
+            class="filter-btn"
+            id="f-reaction"
+            onclick="filterDeck('reaction')"
+          >
+            🔮 תגובות
           </button>
-
-          <button onclick="setFilter('intimacy', this)">
-            ❤️ אינטימיות
-          </button>
-
-          <button onclick="setFilter('hot', this)">
-            🥵 לוהט
-          </button>
-
-          <button onclick="setFilter('funny', this)">
-            😂 מצחיק
-          </button>
-
-          <button onclick="setFilter('special', this)">
-            🃏 מיוחד
+          <button class="filter-btn" id="f-bonus" onclick="filterDeck('bonus')">
+            ✨ בונוסים
           </button>
         </div>
       </div>
 
-      <!-- CARD -->
-
-      <div class="deck">
-        <div class="card" id="card" onclick="flipCard()">
-          <div class="side back">
-            <div class="emoji">💋</div>
-            <p>לחצו לחשיפת הקלף</p>
+      <div class="deck-area">
+        <div class="card-box" id="cardBox" onclick="toggleCardFlip()">
+          <div class="card-side card-back-side">
+            <div class="icon">💋</div>
+            <div class="prompt">לחצו לחשיפת המשימה</div>
           </div>
-
-          <div class="side front flirt" id="frontCard">
+          <div class="card-side card-front-side mission" id="cardFront">
             <div class="card-top">
-              <div class="tag" id="tag">פלירטוט</div>
-              <div id="icon">😏</div>
+              <span class="card-tag" id="cardTag">משימה זוגית</span>
+              <span id="cardIcon">😈</span>
             </div>
-
-            <div class="text" id="text">
-              טוען...
-            </div>
-
-            <div class="bottom">
-              <span id="level">שלב 1</span>
-              <span id="counter">0 קלפים</span>
+            <p class="card-main-text" id="cardText">טוען...</p>
+            <div class="card-bottom">
+              <span id="cardLevel">רמה: קל</span>
+              <span id="cardCountDisplay">נותרו קלפים</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- ACTIONS -->
-
-      <div class="actions">
-        <button class="btn" id="mainBtn" onclick="mainAction()">
+      <div class="action-area">
+        <button class="btn" id="mainActionBtn" onclick="handleMainAction()">
           שלוף קלף 🃏
         </button>
-
-        <button class="btn secondary" onclick="resetGame()">
-          איפוס משחק
-        </button>
+        <div style="display: flex; gap: 8px; width: 100%">
+          <button
+            class="btn btn-sec"
+            style="flex: 1"
+            onclick="resetEntireGame()"
+          >
+            איפוס
+          </button>
+          <button
+            class="btn btn-sec"
+            style="
+              flex: 1.4;
+              border-color: var(--gold);
+              color: var(--gold);
+              font-weight: 800;
+            "
+            onclick="openExtraGames()"
+          >
+            🔥 משחקי עונג
+          </button>
+        </div>
       </div>
     </div>
 
     <script>
-      const cards = [
-        // FLIRT
-
+      const baseCards = [
+        // ================== שלב 1: גישושים וחימום ==================
         {
-          type: "flirt",
-          tag: "פלירטוט",
-          icon: "😏",
-          level: 1,
-          text: "{turn}, התקרב/י לפנים של {partner} עד שכמעט יש נשיקה — ועצור/י ברגע האחרון.",
+          stage: 1,
+          type: "mission",
+          tag: "חימום רומנטי",
+          icon: "💆",
+          level: "עדין",
+          text: "{turn}, {T:עליך/עלייך} להעניק ל-{partner} עיסוי מפנק ומלטף בכתפיים ובצוואר במשך דקה שלמה.",
         },
-
         {
-          type: "flirt",
-          tag: "פלירטוט",
+          stage: 1,
+          type: "mission",
+          tag: "חימום רומנטי",
           icon: "👀",
-          level: 1,
-          text: "{turn}, הסתכל/י ל-{partner} בעיניים במשך 20 שניות בלי לצחוק.",
+          level: "עדין",
+          text: "{turn} ו-{partner}, הביטו ישירות {T:זה/זו} ל{P:זה/זו} בעיניים במשך 30 שניות רצופות בלי לדבר ובלי לצחוק.",
         },
-
         {
-          type: "flirt",
-          tag: "פלירטוט",
-          icon: "💬",
-          level: 1,
-          text: "{turn}, ספר/י מה הדבר הכי מושך ב-{partner}.",
+          stage: 1,
+          type: "mission",
+          tag: "חימום רומנטי",
+          icon: "👂",
+          level: "עדין",
+          text: "{turn}, {T:לחש/לחשי} ל-{partner} באוזן 3 דברים ספציפיים ש{T:אתה/את} הכי {T:אוהב/אוהבת} בגוף {P:שלו/שלה}.",
         },
-
         {
-          type: "flirt",
-          tag: "פלירטוט",
-          icon: "🫦",
-          level: 1,
-          text: "{turn}, נשוך/כי את השפה והתקרב/י ל-{partner} בצורה מפתה.",
+          stage: 1,
+          type: "mission",
+          tag: "חימום רומנטי",
+          icon: "🤲",
+          level: "עדין",
+          text: "{turn}, {T:קח/קחי} את הידיים של {partner}, {T:הצמד/הצמידי} אותן לשפתיים שלך ו{T:הענק/העניקי} להן 5 נשיקות חמות ורכות.",
         },
-
-        // TEASE
-
         {
-          type: "tease",
-          tag: "טיזינג",
-          icon: "🔥",
-          level: 2,
-          text: "{turn}, העבר/י אצבע לאורך הירך הפנימית של {partner}.",
+          stage: 1,
+          type: "mission",
+          tag: "חימום פסיכולוגי",
+          icon: "🧠",
+          level: "עדין",
+          text: "{turn}, {T:לחש/לחשי} ל-{partner} באוזן מה הדבר הכי נועז שחשבת עליו השבוע בהקשר {P:שלו/שלה}.",
         },
-
         {
-          type: "tease",
-          tag: "טיזינג",
+          stage: 1,
+          type: "mission",
+          tag: "משחק חושים קל",
+          icon: "🌱",
+          level: "עדין",
+          text: "{turn}, עצמו עיניים שניכם. קחו קצה של פריט לבוש או קצוות שיער, והעבירו אותו ברכות על השפתיים והצוואר של {partner} במשך 30 שניות.",
+        },
+        {
+          stage: 1,
+          type: "mission",
+          tag: "חימום רומנטי",
           icon: "💋",
-          level: 2,
-          text: "{turn}, נשק/י את הצוואר של {partner} במשך 10 שניות.",
+          level: "עדין",
+          text: "{turn}, {T:עליך/עלייך} לנשק את {partner} 3 נשיקות עדינות אך ארוכות בפינות השפתיים.",
+        },
+        {
+          stage: 1,
+          type: "reaction",
+          tag: "קלף תגובה",
+          icon: "🛡️",
+          level: "עדין",
+          text: "קלף חסינות קל! {turn} {T:יכול/יכולה} לסרב למשימה הנוכחית, בתנאי ש{T:הוא מעניק/היא מעניקה} ל-{partner} נשיקה ארוכה על הלחי.",
+        },
+        {
+          stage: 1,
+          type: "bonus",
+          tag: "בונוס שבועי",
+          icon: "☕",
+          level: "עדין",
+          text: "פינוק בוקר: {partner} {P:יכין ויגיש/תכין ותגיש} ל-{turn} קפה או שייק מחר בבוקר ישירות למיטה.",
         },
 
+        // ================== שלב 2: מעלים דופק ==================
         {
-          type: "tease",
-          tag: "טיזינג",
-          icon: "🖐️",
-          level: 2,
-          text: "{turn}, העבר/י יד לאורך הגב של {partner} בצורה איטית.",
+          stage: 2,
+          type: "mission",
+          tag: "מתח מיני",
+          icon: "👄",
+          level: "לוהט",
+          text: "{turn}, {T:הענק/העניקי} ל-{partner} נשיקה צרפתית לוהטת, רטובה ואיטית שנמשכת לפחות 40 שניות ברציפות.",
+        },
+        {
+          stage: 2,
+          type: "mission",
+          tag: "חוקי הגבלה",
+          icon: "⏳",
+          level: "לוהט",
+          text: "{turn}, {T:אתה רשאי/את רשאית} ללטף ולנשק את {partner} בכל מקום בגוף למשך דקה שלמה - מלבד החזה ואיבר המין. בנו מתח!",
+        },
+        {
+          stage: 2,
+          type: "mission",
+          tag: "סנכרון נשימות",
+          icon: "💨",
+          level: "לוהט",
+          text: "{turn} ו-{partner}, הצמידו בטן לבטן בעירום חלקי. עליכם לנשום יחד באותו הקצב בדיוק, מבלי לדבר ובלי לזוז, במשך דקה.",
+        },
+        {
+          stage: 2,
+          type: "mission",
+          tag: "מתח מיני",
+          icon: "👚",
+          level: "לוהט",
+          text: "{turn}, {T:עליך/עלייך} להוריד מ-{partner} פריט לבוש אחד (חולצה, גופייה או ז׳קט) ולהשאיר {P:אותו/אותה} {P:חשוף/חשופה} חלקית.",
+        },
+        {
+          stage: 2,
+          type: "mission",
+          tag: "מתח מיני",
+          icon: "🧛",
+          level: "לוהט",
+          text: "{turn}, {T:נשק/נשקי} ו{T:לטף/לטפי} את הצוואר של {partner} מלמעלה למטה, ו{T:תן/תני} {P:לו/לה} נשיכות קטנות בתנוך האוזן.",
+        },
+        {
+          stage: 2,
+          type: "mission",
+          tag: "מתח מיני",
+          icon: "🍑",
+          level: "לוהט",
+          text: "{turn}, {T:תפוס/תפסי} את ישבנו של {partner} מעל המכנסיים בחוזקה ו{T:הצמד/הצמידי} את הגוף שלך {P:אליו/אליה}.",
+        },
+        {
+          stage: 2,
+          type: "mission",
+          tag: "מתח מיני",
+          icon: "🧠",
+          level: "לוהט",
+          text: "{turn}, {T:ספר/ספרי} ל-{partner} פנטזיה מינית אחת שעוד לא הגשמתם והיית רוצה לנסות {P:איתו/איתה}.",
+        },
+        {
+          stage: 2,
+          type: "reaction",
+          tag: "קלף תגובה",
+          icon: "🔀",
+          level: "לוהט",
+          text: 'שדרוג חרמני! {turn} {T:יכול/יכולה} להוסיף את המילים "בלי חולצה" או "עם עיניים עצומות" למשימה הנוכחית.',
         },
 
-        // INTIMACY
-
+        // ================== שלב 3: אקסטרים נועז והתקדמות לאקט ==================
         {
-          type: "intimacy",
-          tag: "אינטימיות",
-          icon: "❤️",
-          level: 3,
-          text: "{turn}, שתפו אחד את השני בפנטזיה רומנטית.",
+          stage: 3,
+          type: "mission",
+          tag: "מין אוראלי",
+          icon: "👅",
+          level: "אקסטרים",
+          isAdaptive: true,
+          textM:
+            "{turn}, עליך להוריד את התחתונים של {partner}, לרדת אליה וללקק או לנשק את איבר המין שלה בתשוקה במשך 45 שניות רצופות.",
+          textF:
+            "{turn}, עליך להוריד את התחתונים של {partner}, לרדת אליו וללקק, למצוץ או לנשק את איבר המין שלו בתשוקה במשך 45 שניות רצופות.",
         },
-
         {
-          type: "intimacy",
-          tag: "אינטימיות",
-          icon: "🥰",
-          level: 3,
-          text: "{turn}, תן/י חיבוק צמוד ואיטי ל-{partner}.",
-        },
-
-        {
-          type: "intimacy",
-          tag: "אינטימיות",
-          icon: "💞",
-          level: 3,
-          text: "{turn}, ספר/י ל-{partner} מתי הכי נמשכת אליו/אליה.",
-        },
-
-        // HOT
-
-        {
-          type: "hot",
-          tag: "לוהט",
+          stage: 3,
+          type: "mission",
+          tag: "נגיעות אינטימיות",
           icon: "🥵",
-          level: 4,
-          text: "{turn}, נשק/י את {partner} נשיקה ארוכה ואינטנסיבית.",
+          level: "אקסטרים",
+          isAdaptive: true,
+          textM:
+            "{turn}, החלק את היד שלך ישירות לתוך המכנסיים או התחתונים של {partner} וגע באיבר המין שלה בצורה מחרמנת ומעוררת עד הסיבוב הבא.",
+          textF:
+            "{turn}, החליקי את היד שלך ישירות לתוך המכנסיים או התחתונים של {partner} וגעי באיבר המין שלו, עסי ולטפי אותו בצורה מחרמנת עד הסיבוב הבא.",
         },
-
         {
-          type: "hot",
-          tag: "לוהט",
+          stage: 3,
+          type: "mission",
+          tag: "משחק חושים קפוא",
+          icon: "🧊",
+          level: "אקסטרים",
+          isAdaptive: true,
+          textM:
+            "{turn}, קח קוביית קרח בפה (או משקה קר) ורד לאיבר המין של {partner} כדי להעניק לה מין אוראלי מעורר ומקפיא חושים למשך 30 שניות.",
+          textF:
+            "{turn}, קחי קוביית קרח בפה (או משקה קר) ורדי לאיבר המין של {partner} כדי להעניק לו מין אוראלי מעורר ומקפיא חושים למשך 30 שניות.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "חלקלק ורטוב",
+          icon: "🧴",
+          level: "אקסטרים++",
+          isAdaptive: true,
+          textM:
+            "{turn}, עליך לשפוך כמות נדיבה של חומר סיכוך (או שמן) על איבר המין של {partner} ועל שלך, לעבור לתנוחת מיסיונר ולחדור אליה בתנועות מהירות ורטובות במיוחד.",
+          textF:
+            "{turn}, עליך לשפוך כמות נדיבה של חומר סיכוך (או שמן) על איבר המין של {partner} ועל שלך, להתיישב מעליו ולכוון אותו לתוכך בתנועות מהירות ורטובות במיוחד.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "הבאה לקצה",
+          icon: "🛑",
+          level: "אקסטרים++",
+          isAdaptive: true,
+          textM:
+            "{turn}, עליך לענג את איבר המין של {partner} עם הפה או הידיים, להביא אותה עד לשנייה שלפני האורגזמה הנשית שלה – ואז לעצור בפתאומיות.",
+          textF:
+            "{turn}, עליך לענג את איבר המין של {partner} עם הפה או הידיים, להביא אותו עד לשנייה שלפני האורגזמה והגמירה שלו – ואז לעצור בפתאומיות.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "תנוחת קאוגירל",
+          icon: "🐎",
+          level: "אקסטרים++",
+          isAdaptive: true,
+          textM:
+            "{turn}, עברו למיטה. {partner} שוכב/ת על הגב. עליך להנחות אותה להתיישב מעליך בתנוחת רכיבה (עירומים לחלוטין), לחדור ולנוע בסערה למשך דקה.",
+          textF:
+            "{turn}, עברו למיטה. {partner} שוכב על הגב. עליך להתיישב מעליו בתנוחת רכיבה (עירומים לחלוטין), להחליק אותו לתוכך ולנוע בסערה למשך דקה שלמה.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "תנוחת דוגי",
+          icon: "🐕",
+          level: "אקסטרים++",
+          isAdaptive: true,
+          textM:
+            "{turn}, עברו למיטה. הנחה את {partner} לעבור למצב עמידת שש. היצמד אליה מאחור, תפוס את ישבנה החשוף בחוזקה, וחדר אליה בתנועות עמוקות וקצביות.",
+          textF:
+            "{turn}, עברו למיטה. עברי למצב עמידת שש על המיטה. {partner} נצמד אלייך מאחור, תופס את ישבנך החשוף בחוזקה וחודר אלייך בתנועות עמוקות וקצביות.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "משחק חושים",
+          icon: "🙈",
+          level: "אקסטרים",
+          text: "{turn}, {T:עליך/עלייך} לקשור את העיניים של {partner} עם פריט לבוש. כעת, {T:הענק/העניקי} {P:לו/לה} 10 נשיקות חמות במקומות שונים בגוף.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "🔥 התפשטות מוחלטת",
           icon: "🔥",
-          level: 4,
-          text: "{turn}, הצמיד/י גוף ל-{partner} במשך 20 שניות.",
+          level: "אקסטרים",
+          text: "{turn}, {T:התפשט/התפשטי} לחלוטין ו{T:הישאר/הישארי} {T:עירום/עירומה} לחלוטין מול {partner} להמשך המשחק.",
         },
-
         {
-          type: "hot",
-          tag: "לוהט",
-          icon: "💫",
-          level: 4,
-          text: "{turn}, לחש/י ל-{partner} משהו מפתה באוזן.",
+          stage: 3,
+          type: "mission",
+          tag: "תנוחת 69",
+          icon: "🔄",
+          level: "אקסטרים++",
+          text: "{turn} ו-{partner}, עליכם להסתדר בתנוחת 69 הפוכה על המיטה, ולפנק {T:אחד את השני/אחת את השנייה} במין אוראלי עוצמתי ובו-זמני למשך דקה.",
         },
-
-        // FUNNY
-
         {
-          type: "funny",
-          tag: "מצחיק",
-          icon: "😂",
-          level: 1,
-          text: "{turn}, עשה/י מבט מפתה במשך 15 שניות בלי לצחוק.",
+          stage: 3,
+          type: "reaction",
+          tag: "קלף תגובה",
+          icon: "👑",
+          level: "אקסטרים",
+          text: "פקודת שליטה! המשימה הנוכחית מבוטלת. {partner} {P:קובע/קובעת} משימה מינית או תנוחת חדירה חלופית, ו-{turn} {T:חייב/חייבת} לבצע מיד.",
         },
-
         {
-          type: "funny",
-          tag: "מצחיק",
-          icon: "🎭",
-          level: 1,
-          text: "{turn}, דבר/י בקול סקסי מוגזם עד סוף התור.",
-        },
-
-        // SPECIAL
-
-        {
-          type: "special",
-          tag: "מיוחד",
+          stage: 3,
+          type: "bonus",
+          tag: "בונוס למיטה",
           icon: "🃏",
-          level: 3,
-          text: "{turn}, בחר/י מי יבצע את המשימה הבאה.",
+          level: "אקסטרים",
+          text: "קלף הגשמת פנטזיה! {turn} {T:יכול/יכולה} לעצור את המשחק ברגע זה ולדרוש מ-{partner} תנוחה או אקט שתמיד רציתם במיטה. אין זכות סירוב.",
         },
-
         {
-          type: "special",
-          tag: "מיוחד",
+          stage: 3,
+          type: "mission",
+          tag: "👑 פקודת קצב",
           icon: "⚡",
-          level: 4,
-          text: "שלפו מיד עוד קלף נוסף.",
+          level: "אקסטרים++",
+          text: "{turn} ו-{partner}, עברו לחדירה בתנוחה המועדפת עליכם. עליכם לבצע אקט של Edging: לזוז בקצב מהיר בטירוף למשך 30 שניות, ואז לעצור לחלוטין ל-20 שניות כשהאיבר בפנים בלי לזוז, וחוזר חלילה.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "תנוחת הלוטוס האינטימית",
+          icon: "🧘",
+          level: "אקסטרים",
+          isAdaptive: true,
+          textM:
+            "{turn}, התיישב בישיבה מזרחית. הנחה את {partner} להתיישב מעליך עם הפנים אלייך, כשרגליה כרוכות סביב המותניים שלך. חדור אליה באיטיות ונועו יחד בחיבוק צמוד ונשיקות בצוואר.",
+          textF:
+            "{turn}, הנחי את {partner} לשבת בישיבה מזרחית. התיישבי מעליו עם הפנים אליו, כרכי את רגלייך סביב המותניים שלו ותני לו לחדור אלייך עמוק. נועו יחד בחיבוק חם ואיטי.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "מיסיונרית משודרגת",
+          icon: "📐",
+          level: "אקסטרים",
+          isAdaptive: true,
+          textM:
+            "{turn}, קח כרית והנח אותה מתחת לישבן של {partner}. עברו לתנוחת מיסיונרית, הצמד את האגן שלך אליה בחוזקה והחל קצת קדימה. בצעו חדירה עמוקה עם חיכוך מקסימלי בדגדגן שלה במשך דקה.",
+          textF:
+            "{turn}, קחי כרית והניחי אותה מתחת לישבן שלך. {partner} עובר מעלייך למיסיונרית צמודה, כשהאגן שלו נצמד אלייך בחוזקה. נועו יחד בקצב עמוק ומחכך למשך דקה שלמה.",
+        },
+        {
+          stage: 3,
+          type: "mission",
+          tag: "תנוחת קאוגירל הפוכה",
+          icon: "🍑",
+          level: "אקסטרים++",
+          isAdaptive: true,
+          textM:
+            "{turn}, שכב על הגב. הנחה את {partner} לעלות מעליך כשהגב שלה מופנה אלייך (קאוגירל הפוכה). תן לה לקבוע את קצב החדירה בזמן שאתה נהנה מהנוף ומלטף את ישבנה.",
+          textF:
+            "{turn}, {partner} שוכב על הגב. עלי מעליו כשהגב שלך מופנה אל הפנים שלו (קאוגירל הפוכה). החליקי אותו לתוכך והתחילי לרכוב בקצב ובעומק שמתאימים לך.",
         },
       ];
 
+      const locationsPool = [
+        "מיטה / מזרן 🛌",
+        "על השטיח 🧶",
+        "על ספה בסלון 🛋️",
+        "על כיסא / כורסה 🪑",
+        "צמוד לקיר 🧱",
+        "במטבח 🍳",
+      ];
+      const durationsPool = [
+        "30 שניות ⏱️",
+        "דקה שלמה ⏳",
+        "90 שניות ⚡",
+        "עד הסיבוב הבא 🔄",
+        "בקצב איטי במיוחד 🐌",
+        "ללא הגבלת זמן ✨",
+      ];
+
+      // מאגרי נתונים לרולטה החוזית
+      const rouletteActions = [
+        "לנשק חם 💋",
+        "ללקק בתשוקה 👅",
+        "לנשוך בעדינות 🧛",
+        "ללטף ברוך 💆",
+        "לנשוף אוויר חם 💨",
+        "לעסות בחושניות 🧴",
+        "ללטף עם קרח 🧊",
+      ];
+      const rouletteTargets = [
+        "בצוואר 🧣",
+        "בפנים הירך 🦵",
+        "בישבן 🍑",
+        "בתנוך האוזן 👂",
+        "בבטן התחתונה 🤰",
+        "באיבר המין 🔞",
+        "מאחורי הברך 🦵",
+      ];
+
       let players = ["שחקן 1", "שחקן 2"];
-      let active = 0;
-      let flipped = false;
-      let used = 0;
-      let filter = "all";
-      let currentDeck = [];
+      let genders = ["M", "F"];
+      let activeIndex = 0;
+      let currentCategory = "all";
 
-      function shuffleDeck() {
-        currentDeck = [...cards];
+      let activeDeck = [];
+      let playedCards = [];
+      let currentGameStage = 1;
 
-        for (let i = currentDeck.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [currentDeck[i], currentDeck[j]] = [
-            currentDeck[j],
-            currentDeck[i],
-          ];
-        }
+      let selectedMode = "slow";
+      let expressCardsPlayedInStage = 0;
+      let timerInterval = null;
+      let totalSecondsSelected = 600;
+      let secondsRemaining = 600;
+      let isCardRevealed = false;
+
+      // הגדרות מנוע המוזיקה
+      let isAudioEnabled = true;
+      let audioCtx = null;
+      let synthNodes = [];
+      let musicInterval = null;
+      let masterGain = null;
+
+      // משתני מאמן הקצב (Conductor)
+      let conductorTimerInterval = null;
+      let conductorState = "freeze"; // freeze or storm
+      let conductorSecondsLeft = 20;
+      let isConductorRunning = false;
+
+      function setGender(playerNum, gender) {
+        const idx = playerNum - 1;
+        genders[idx] = gender;
+        const lowGen = gender.toLowerCase();
+        const altGen = gender === "M" ? "f" : "m";
+        document
+          .getElementById(`p${playerNum}-${lowGen}`)
+          .classList.add("active");
+        document
+          .getElementById(`p${playerNum}-${altGen}`)
+          .classList.remove("active");
       }
 
-      shuffleDeck();
-
-      function startGame() {
-        players[0] =
-          document.getElementById("p1").value.trim() || "שחקן 1";
-
-        players[1] =
-          document.getElementById("p2").value.trim() || "שחקן 2";
-
-        document.getElementById("startScreen").classList.add("hidden");
-
-        updateTurn();
-      }
-
-      function updateTurn() {
-        document.getElementById("turnName").innerText =
-          players[active];
-      }
-
-      function mainAction() {
-        flipCard();
-      }
-
-      function flipCard() {
-        const card = document.getElementById("card");
-
-        if (!flipped) {
-          loadCard();
-
-          card.classList.add("flipped");
-
-          flipped = true;
-
-          document.getElementById("mainBtn").innerText =
-            "המשימה בוצעה ✓";
+      function toggleAudioSetting(status) {
+        isAudioEnabled = status;
+        if (status) {
+          document.getElementById("audio-on").classList.add("active");
+          document.getElementById("audio-off").classList.remove("active");
         } else {
-          card.classList.remove("flipped");
-
-          flipped = false;
-
-          active = active === 0 ? 1 : 0;
-
-          updateTurn();
-
-          document.getElementById("mainBtn").innerText =
-            "שלוף קלף 🃏";
+          document.getElementById("audio-off").classList.add("active");
+          document.getElementById("audio-on").classList.remove("active");
+          stopAmbianceMusic();
         }
       }
 
-      function loadCard() {
-        let filtered = currentDeck.filter(
-          (c) => filter === "all" || c.type === filter,
+      function selectGameMode(mode) {
+        selectedMode = mode;
+        document
+          .querySelectorAll(".mode-card")
+          .forEach((c) => c.classList.remove("active"));
+        document.getElementById(`mode-${mode}`).classList.add("active");
+
+        const config = document.getElementById("timerConfig");
+        if (mode === "timer") {
+          config.style.display = "flex";
+        } else {
+          config.style.display = "none";
+        }
+      }
+
+      function setTimerDuration(minutes) {
+        totalSecondsSelected = minutes * 60;
+        secondsRemaining = totalSecondsSelected;
+        document
+          .querySelectorAll(".time-opt")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(`t-${minutes}`).classList.add("active");
+      }
+
+      function initAmbianceMusic() {
+        if (!isAudioEnabled) return;
+        try {
+          window.AudioContext =
+            window.AudioContext || window.webkitAudioContext;
+          if (!audioCtx) audioCtx = new AudioContext();
+
+          if (!masterGain) {
+            masterGain = audioCtx.createGain();
+            masterGain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+            masterGain.connect(audioCtx.destination);
+          }
+
+          playAmbientPad();
+          if (musicInterval) clearInterval(musicInterval);
+          musicInterval = setInterval(playAmbientPad, 5000);
+        } catch (e) {
+          console.log("Audio contexts blocker or error context setup");
+        }
+      }
+
+      function playAmbientPad() {
+        if (!audioCtx || audioCtx.state === "suspended") return;
+
+        const stage1Chords = [
+          [110.0, 130.81, 164.81],
+          [146.83, 174.61, 220.0],
+        ];
+        const stage2Chords = [
+          [82.41, 110.0, 130.81],
+          [98.0, 123.47, 164.81],
+        ];
+        const stage3Chords = [
+          [65.41, 98.0, 130.81],
+          [73.42, 110.0, 146.83],
+        ];
+        const stormChords = [
+          [130.81, 164.81, 196.0, 220.0],
+          [146.83, 174.61, 220.0, 293.66],
+        ];
+
+        let currentChordSet = stage1Chords;
+        if (isConductorRunning && conductorState === "storm") {
+          currentChordSet = stormChords;
+        } else if (currentGameStage === 2) {
+          currentChordSet = stage2Chords;
+        } else if (currentGameStage === 3) {
+          currentChordSet = stage3Chords;
+        }
+
+        staticChordIndex = (window.staticChordIndex || 0) + 1;
+        window.staticChordIndex = staticChordIndex;
+        let chord = currentChordSet[staticChordIndex % currentChordSet.length];
+
+        synthNodes.forEach((node) => {
+          try {
+            node.gain.gain.exponentialRampToValueAtTime(
+              0.001,
+              audioCtx.currentTime + 1.2,
+            );
+            setTimeout(() => node.osc.stop(), 1300);
+          } catch (e) {}
+        });
+        synthNodes = [];
+
+        chord.forEach((freq) => {
+          let osc = audioCtx.createOscillator();
+          let gainNode = audioCtx.createGain();
+
+          // סאונד מעט יותר מחוספס במצב סערה
+          osc.type =
+            isConductorRunning && conductorState === "storm"
+              ? "sawtooth"
+              : "triangle";
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+          gainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
+          gainNode.gain.linearRampToValueAtTime(
+            isConductorRunning && conductorState === "storm" ? 0.7 : 1,
+            audioCtx.currentTime + 1.2,
+          );
+
+          osc.connect(gainNode);
+          gainNode.connect(masterGain);
+
+          osc.start();
+          synthNodes.push({ osc: osc, gain: gainNode });
+        });
+      }
+
+      function stopAmbianceMusic() {
+        if (musicInterval) clearInterval(musicInterval);
+        synthNodes.forEach((node) => {
+          try {
+            node.osc.stop();
+          } catch (e) {}
+        });
+        synthNodes = [];
+      }
+
+      function triggerHaptic(level) {
+        if (!("vibrate" in navigator)) return;
+        if (level === "עדין") {
+          navigator.vibrate(60);
+        } else if (level === "לוהט") {
+          navigator.vibrate([100, 50, 100]);
+        } else {
+          navigator.vibrate([200, 100, 200, 100, 300]);
+        }
+      }
+
+      function initGame() {
+        const p1 = document.getElementById("p1Input").value.trim();
+        const p2 = document.getElementById("p2Input").value.trim();
+        players[0] = p1 ? p1 : "שחקן 1";
+        players[1] = p2 ? p2 : "שחקן 2";
+
+        expressCardsPlayedInStage = 0;
+        playedCards = [];
+        clearInterval(timerInterval);
+
+        if (selectedMode === "peak") {
+          currentGameStage = 3;
+        } else {
+          currentGameStage = 1;
+        }
+
+        generateFreshDeck();
+        initAmbianceMusic();
+
+        if (selectedMode === "timer") {
+          secondsRemaining = totalSecondsSelected;
+          document.getElementById("timerBanner").style.display = "block";
+          startCountdown();
+        } else {
+          document.getElementById("timerBanner").style.display = "none";
+        }
+
+        document.getElementById("splashScreen").classList.add("hidden");
+        updateTurnUI();
+        updateStageUI();
+      }
+
+      function startCountdown() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+          secondsRemaining--;
+          updateTimerDisplay();
+
+          let elapsedPct =
+            (totalSecondsSelected - secondsRemaining) / totalSecondsSelected;
+          let calculatedStage = 1;
+          if (elapsedPct >= 0.35 && elapsedPct < 0.7) {
+            calculatedStage = 2;
+          } else if (elapsedPct >= 0.7) {
+            calculatedStage = 3;
+          }
+
+          if (calculatedStage !== currentGameStage) {
+            currentGameStage = calculatedStage;
+            updateStageUI();
+          }
+
+          if (secondsRemaining <= 0) {
+            clearInterval(timerInterval);
+            document.getElementById("timerBanner").innerText =
+              "⏱️ הזמן נגמר! הגיע זמן השיא 🔞";
+            currentGameStage = 3;
+            updateStageUI();
+          }
+        }, 1000);
+      }
+
+      function updateTimerDisplay() {
+        const mins = Math.floor(secondsRemaining / 60);
+        const secs = secondsRemaining % 60;
+        const formattedSecs = secs < 10 ? "0" + secs : secs;
+        document.getElementById("timerBanner").innerText =
+          `⏳ זמן נותר: ${mins}:${formattedSecs}`;
+      }
+
+      function generateFreshDeck() {
+        activeDeck = [...baseCards];
+        for (let i = activeDeck.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [activeDeck[i], activeDeck[j]] = [activeDeck[j], activeDeck[i]];
+        }
+      }
+
+      function updateTurnUI() {
+        document.getElementById("activePlayerName").innerText =
+          players[activeIndex];
+      }
+
+      function updateStageUI() {
+        const tracker = document.getElementById("stageTracker");
+
+        if (selectedMode === "chaos") {
+          tracker.className = `stage-tracker stage-chaos`;
+          tracker.innerText = "🎲 רולטת כאוס: הכל מהכל בהפתעה!";
+          return;
+        }
+
+        tracker.className = `stage-tracker stage-${currentGameStage}`;
+        if (currentGameStage === 1) {
+          tracker.innerText = "שלב 1: גישושים וחימום מנועים ✨";
+        } else if (currentGameStage === 2) {
+          tracker.innerText = "שלב 2: מעלים את הדופק והחום 🔥";
+        } else if (currentGameStage === 3) {
+          tracker.innerText = "שלב 3: אקסטרים נועז חסר מעצורים 🔞";
+        }
+
+        updateAmbientBackground(false);
+      }
+
+      function rollAmbianceDice() {
+        const diceBanner = document.getElementById("diceBanner");
+        const randomLoc =
+          locationsPool[Math.floor(Math.random() * locationsPool.length)];
+        const randomDur =
+          durationsPool[Math.floor(Math.random() * durationsPool.length)];
+
+        document.getElementById("diceLocation").innerText = randomLoc;
+        document.getElementById("diceDuration").innerText = randomDur;
+        diceBanner.style.display = "flex";
+      }
+
+      function toggleCardFlip() {
+        const box = document.getElementById("cardBox");
+        if (!isCardRevealed) {
+          if (prepareCardData()) {
+            box.classList.add("flipped");
+            isCardRevealed = true;
+            document.getElementById("mainActionBtn").innerText =
+              "המשימה בוצעה! ✓";
+          }
+        } else {
+          box.classList.remove("flipped");
+          isCardRevealed = false;
+          document.getElementById("mainActionBtn").innerText = "שלוף קלף 🃏";
+          document.getElementById("diceBanner").style.display = "none";
+          activeIndex = activeIndex === 0 ? 1 : 0;
+          updateTurnUI();
+        }
+      }
+
+      function handleMainAction() {
+        toggleCardFlip();
+      }
+
+      function parseGenderText(text, turnGender, partnerGender) {
+        let processed = text;
+        processed = processed.replace(
+          /{T:([^\/]+)\/([^}]+)}/g,
+          (match, mText, fText) => {
+            return turnGender === "M" ? mText : fText;
+          },
         );
+        processed = processed.replace(
+          /{P:([^\/]+)\/([^}]+)}/g,
+          (match, mText, fText) => {
+            return partnerGender === "M" ? mText : fText;
+          },
+        );
+        return processed;
+      }
 
-        if (!filtered.length) {
-          shuffleDeck();
+      function prepareCardData() {
+        let filtered = [];
 
-          filtered = currentDeck.filter(
-            (c) => filter === "all" || c.type === filter,
+        if (selectedMode === "chaos") {
+          filtered = activeDeck.filter(
+            (c) => currentCategory === "all" || c.type === currentCategory,
+          );
+        } else {
+          filtered = activeDeck.filter(
+            (c) =>
+              (currentCategory === "all" || c.type === currentCategory) &&
+              c.stage === currentGameStage,
           );
         }
 
-        // מערכת מתח עולה
+        if (filtered.length === 0) {
+          if (
+            selectedMode !== "chaos" &&
+            currentGameStage < 3 &&
+            selectedMode !== "timer"
+          ) {
+            currentGameStage++;
+            expressCardsPlayedInStage = 0;
+            updateStageUI();
+          }
 
-        const stage = Math.min(Math.floor(used / 4) + 1, 4);
-
-        let stageCards = filtered.filter(
-          (c) => c.level <= stage,
-        );
-
-        if (!stageCards.length) {
-          stageCards = filtered;
+          if (filtered.length === 0) {
+            activeDeck = [...baseCards].filter(
+              (bc) => !playedCards.includes(bc),
+            );
+            if (activeDeck.length === 0) {
+              playedCards = [];
+              generateFreshDeck();
+            }
+            filtered = activeDeck.filter((c) =>
+              selectedMode === "chaos" ? true : c.stage === currentGameStage,
+            );
+          }
         }
 
-        const selected =
-          stageCards[
-            Math.floor(Math.random() * stageCards.length)
-          ];
+        const card = filtered[0];
+        const idx = activeDeck.indexOf(card);
+        if (idx > -1) {
+          activeDeck.splice(idx, 1);
+        }
+        playedCards.push(card);
 
-        currentDeck.splice(
-          currentDeck.indexOf(selected),
-          1,
+        if (selectedMode === "express") {
+          expressCardsPlayedInStage++;
+          if (expressCardsPlayedInStage >= 3 && currentGameStage < 3) {
+            currentGameStage++;
+            expressCardsPlayedInStage = 0;
+            setTimeout(() => {
+              updateStageUI();
+            }, 600);
+          }
+        }
+
+        const currentTurnName = players[activeIndex];
+        const partnerName = activeIndex === 0 ? players[1] : players[0];
+        const turnGender = genders[activeIndex];
+        const partnerGender = activeIndex === 0 ? genders[1] : genders[0];
+
+        let baseText = card.text;
+        if (card.isAdaptive) {
+          baseText = turnGender === "M" ? card.textM : card.textF;
+        }
+
+        let formattedText = baseText
+          .replace(/{turn}/g, currentTurnName)
+          .replace(/{partner}/g, partnerName);
+        formattedText = parseGenderText(
+          formattedText,
+          turnGender,
+          partnerGender,
         );
 
-        used++;
+        triggerHaptic(card.level);
+        if (card.type === "mission") {
+          rollAmbianceDice();
+        }
 
-        const turn = players[active];
-        const partner = players[active === 0 ? 1 : 0];
+        const front = document.getElementById("cardFront");
+        front.className = `card-side card-front-side ${card.type}`;
+        document.getElementById("cardTag").innerText = card.tag;
+        document.getElementById("cardIcon").innerText = card.icon;
+        document.getElementById("cardText").innerText = formattedText;
+        document.getElementById("cardLevel").innerText = `רמה: ${card.level}`;
 
-        const text = selected.text
-          .replaceAll("{turn}", turn)
-          .replaceAll("{partner}", partner);
+        let remainingInStage = activeDeck.filter((c) =>
+          selectedMode === "chaos" ? true : c.stage === currentGameStage,
+        ).length;
+        document.getElementById("cardCountDisplay").innerText =
+          `נותרו עוד ${remainingInStage} קלפים ייחודיים לשלב זה`;
 
-        const front = document.getElementById("frontCard");
-
-        front.className = `side front ${selected.type}`;
-
-        document.getElementById("tag").innerText =
-          selected.tag;
-
-        document.getElementById("icon").innerText =
-          selected.icon;
-
-        document.getElementById("text").innerText = text;
-
-        document.getElementById("level").innerText =
-          `שלב ${selected.level}`;
-
-        document.getElementById("counter").innerText =
-          `${used} קלפים`;
-
-        updateProgress();
+        return true;
       }
 
-      function updateProgress() {
-        const progress = Math.min((used / 20) * 100, 100);
+      function filterDeck(category) {
+        currentCategory = category;
+        document
+          .querySelectorAll(".filter-btn")
+          .forEach((b) => b.classList.remove("active"));
+        document.getElementById(`f-${category}`).classList.add("active");
 
-        document.getElementById("progressBar").style.width =
-          `${progress}%`;
-
-        let text = "פלירטוט";
-
-        if (used >= 4) text = "טיזינג";
-        if (used >= 8) text = "אינטימיות";
-        if (used >= 12) text = "לוהט";
-        if (used >= 16) text = "אקסטרים";
-
-        document.getElementById("stageText").innerText =
-          text;
+        if (isCardRevealed) {
+          document.getElementById("cardBox").classList.remove("flipped");
+          isCardRevealed = false;
+          document.getElementById("mainActionBtn").innerText = "שלוף קלף 🃏";
+        }
       }
 
-      function setFilter(type, btn) {
-        filter = type;
-
-        document
-          .querySelectorAll(".filters button")
-          .forEach((b) =>
-            b.classList.remove("active"),
-          );
-
-        btn.classList.add("active");
+      // פונקציות מתחם המשחקים הנוספים והרולטות
+      function openExtraGames() {
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume();
+        }
+        initAmbianceMusic();
+        const extraScreen = document.getElementById("extraGamesScreen");
+        extraScreen.classList.remove("slide-up-hidden");
+        extraScreen.classList.add("slide-up-active");
+        updateAmbientBackground(true);
       }
 
-      function resetGame() {
-        active = 0;
-        flipped = false;
-        used = 0;
-        filter = "all";
+      function closeExtraGames() {
+        const extraScreen = document.getElementById("extraGamesScreen");
+        extraScreen.classList.remove("slide-up-active");
+        extraScreen.classList.add("slide-up-hidden");
 
-        shuffleDeck();
+        // עצירת מאמן הקצב אם הוא פועל כדי להחזיר מוזיקה למצב רגיל
+        if (isConductorRunning) {
+          toggleConductor();
+        }
+        updateAmbientBackground(false);
+      }
 
+      function switchExtraTab(tabName) {
         document
-          .getElementById("card")
-          .classList.remove("flipped");
-
-        document.getElementById("progressBar").style.width =
-          `0%`;
-
-        document.getElementById("stageText").innerText =
-          "פלירטוט";
-
+          .querySelectorAll(".extra-tab-btn")
+          .forEach((b) => b.classList.remove("active"));
         document
-          .querySelectorAll(".filters button")
-          .forEach((b, i) => {
-            b.classList.remove("active");
+          .querySelectorAll(".extra-panel")
+          .forEach((p) => p.classList.remove("active"));
 
-            if (i === 0) b.classList.add("active");
-          });
+        document.getElementById(`tab-${tabName}`).classList.add("active");
+        document.getElementById(`panel-${tabName}`).classList.add("active");
+        triggerHaptic("עדין");
+      }
 
-        document.getElementById("startScreen").classList.remove("hidden");
+      // מנגנון סיבוב הרולטה
+      function spinRoulette() {
+        triggerHaptic("עדין");
+        const slotAction = document.getElementById("slot-action");
+        const slotTarget = document.getElementById("slot-target");
+
+        slotAction.classList.add("spinning");
+        slotTarget.classList.add("spinning");
+
+        let counter = 0;
+        const interval = setInterval(() => {
+          slotAction.innerText =
+            rouletteActions[Math.floor(Math.random() * rouletteActions.length)];
+          slotTarget.innerText =
+            rouletteTargets[Math.floor(Math.random() * rouletteTargets.length)];
+          counter++;
+
+          if (counter > 12) {
+            clearInterval(interval);
+            slotAction.classList.remove("spinning");
+            slotTarget.classList.remove("spinning");
+
+            // תוצאה סופית מוחלטת
+            const finalAction =
+              rouletteActions[
+                Math.floor(Math.random() * rouletteActions.length)
+              ];
+            const finalTarget =
+              rouletteTargets[
+                Math.floor(Math.random() * rouletteTargets.length)
+              ];
+            slotAction.innerText = finalAction;
+            slotTarget.innerText = finalTarget;
+
+            triggerHaptic("אקסטרים");
+          }
+        }, 90);
+      }
+
+      // מנגנון ניהול מאמן הקצב ו-Edging קול וסאונד
+      function toggleConductor() {
+        const btn = document.getElementById("conductorActionBtn");
+
+        if (!isConductorRunning) {
+          isConductorRunning = true;
+          btn.innerText = "🛑 עצור את מאמן הקצב";
+          btn.style.background = "transparent";
+          btn.style.border = "2px solid var(--neon-red)";
+          btn.style.color = "var(--neon-red)";
+
+          conductorState = "storm";
+          setupConductorPhase();
+
+          conductorTimerInterval = setInterval(() => {
+            conductorSecondsLeft--;
+            document.getElementById("condTimer").innerText =
+              `00:${conductorSecondsLeft < 10 ? "0" + conductorSecondsLeft : conductorSecondsLeft}`;
+
+            if (conductorSecondsLeft <= 0) {
+              conductorState = conductorState === "storm" ? "freeze" : "storm";
+              setupConductorPhase();
+            }
+          }, 1000);
+        } else {
+          isConductorRunning = false;
+          clearInterval(conductorTimerInterval);
+          document.getElementById("condTimer").innerText = "--:--";
+          document.getElementById("condBox").className =
+            "conductor-box cond-freeze";
+          document.getElementById("condStatus").innerText = "FREEZE";
+          document.getElementById("condStatus").style.color = "var(--ice-blue)";
+          document.getElementById("condDesc").innerText =
+            "עצירה מוחלטת! הישארו בפנים ללא תנועה, הביטו ישירות בעיניים ובנו את המתח המיני.";
+
+          btn.innerText = "🔥 התחל מאמן סערה ושיא";
+          btn.style.background = "var(--neon-red)";
+          btn.style.border = "none";
+          btn.style.color = "white";
+          btn.style.boxShadow = "0 6px 20px var(--neon-glow)";
+
+          if (masterGain && audioCtx) {
+            masterGain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+          }
+          playAmbientPad();
+        }
+      }
+
+      function setupConductorPhase() {
+        const condBox = document.getElementById("condBox");
+        const condStatus = document.getElementById("condStatus");
+        const condDesc = document.getElementById("condDesc");
+
+        if (conductorState === "storm") {
+          conductorSecondsLeft = Math.floor(Math.random() * 21) + 25; // 25-45 שניות סערה
+          condBox.className = "conductor-box cond-storm";
+          condStatus.innerText = "STORM 🔥";
+          condStatus.style.color = "var(--neon-red)";
+          condDesc.innerText =
+            "נועו בסערה! חדירה או עינוג בקצב מהיר, עוצמתי ואינטנסיבי במיוחד. תנו למוזיקה להוביל!";
+          triggerHaptic("אקסטרים++");
+
+          // הגברת ווליום ושינוי המוזיקה
+          if (masterGain && audioCtx) {
+            masterGain.gain.setValueAtTime(0.025, audioCtx.currentTime);
+          }
+        } else {
+          conductorSecondsLeft = Math.floor(Math.random() * 11) + 15; // 15-25 שניות עצירה קפואה
+          condBox.className = "conductor-box cond-freeze";
+          condStatus.innerText = "FREEZE 🛑";
+          condStatus.style.color = "var(--ice-blue)";
+          condDesc.innerText =
+            "עצרו לחלוטין! להישאר בפנים מבלי לזוז מילימטר. לנשום עמוק יחד, להביט בעיניים עד הפעימה הבאה.";
+          triggerHaptic("לוהט");
+
+          // הנמכת ווליום רכה לעצירה
+          if (masterGain && audioCtx) {
+            masterGain.gain.setValueAtTime(0.008, audioCtx.currentTime);
+          }
+        }
+        document.getElementById("condTimer").innerText =
+          `00:${conductorSecondsLeft < 10 ? "0" + conductorSecondsLeft : conductorSecondsLeft}`;
+        playAmbientPad();
+      }
+
+      function resetEntireGame() {
+        clearInterval(timerInterval);
+        clearInterval(conductorTimerInterval);
+        isConductorRunning = false;
+        stopAmbianceMusic();
+
+        activeIndex = 0;
+        isCardRevealed = false;
+        currentCategory = "all";
+        currentGameStage = 1;
+        expressCardsPlayedInStage = 0;
+        genders = ["M", "F"];
+        playedCards = [];
+        activeDeck = [];
+
+        document.getElementById("cardBox").classList.remove("flipped");
+        document.getElementById("mainActionBtn").innerText = "שלוף קלף 🃏";
+        document.getElementById("diceBanner").style.display = "none";
+        document.getElementById("p1Input").value = "";
+        document.getElementById("p2Input").value = "";
+
+        document.getElementById("p1-m").classList.add("active");
+        document.getElementById("p1-f").classList.remove("active");
+        document.getElementById("p2-m").classList.remove("active");
+        document.getElementById("p2-f").classList.add("active");
+
+        document.getElementById("timerBanner").style.display = "none";
+
+        // אתחול כפתור המאמן
+        const btn = document.getElementById("conductorActionBtn");
+        btn.innerText = "🔥 התחל מאמן סערה ושיא";
+        btn.style.background = "var(--neon-red)";
+        btn.style.border = "none";
+        btn.style.color = "white";
+        btn.style.boxShadow = "0 6px 20px var(--neon-glow)";
+        document.getElementById("condTimer").innerText = "--:--";
+        document.getElementById("condBox").className =
+          "conductor-box cond-freeze";
+        document.getElementById("condStatus").innerText = "FREEZE";
+        document.getElementById("condStatus").style.color = "var(--ice-blue)";
+
+        selectGameMode("slow");
+        switchExtraTab("roulette");
+        filterDeck("all");
+        updateStageUI();
+
+        document.getElementById("extraGamesScreen").className =
+          "screen slide-up-hidden";
+        document.getElementById("splashScreen").classList.remove("hidden");
+
+        document.getElementById("accord-phone").checked = false;
+        document.getElementById("accord-flow").checked = false;
+        document.getElementById("startBtn").disabled = true;
+        updateAmbientBackground(false);
+      }
+
+      // תוקף את כפתור ההתחלה רק אם שני התנאים בחוזה מסומנים
+      function validateAccord() {
+        const chk1 = document.getElementById("accord-phone").checked;
+        const chk2 = document.getElementById("accord-flow").checked;
+        document.getElementById("startBtn").disabled = !(chk1 && chk2);
+      }
+
+      // מנהל את שינוי הרקע האווירתי בצורה דינמית וחלקלקה
+      function updateAmbientBackground(isPleasureZone = false) {
+        const container = document.querySelector(".app-container");
+        if (!container) return;
+
+        // הסרת מחלקות קודמות
+        container.classList.remove(
+          "bg-stage-1",
+          "bg-stage-2",
+          "bg-stage-3",
+          "bg-pleasure-zone",
+        );
+
+        if (isPleasureZone) {
+          container.classList.add("bg-pleasure-zone");
+        } else {
+          // שליפת השלב הנוכחי מתוך המשתנה הגלובלי שלך
+          const stage =
+            typeof currentGameStage !== "undefined" ? currentGameStage : 1;
+          container.classList.add("bg-stage-" + stage);
+        }
       }
     </script>
   </body>
