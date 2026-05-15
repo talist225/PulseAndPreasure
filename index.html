@@ -220,15 +220,12 @@
       }
 
       .screen {
-        position: relative;
+        position: absolute;
         top: 0;
         left: 0;
         width: 100%;
-        min-height: 100vh;
-        min-height: 100dvh;
+        height: 100%;
         padding: 24px;
-        padding-bottom: 100px;
-        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -239,26 +236,10 @@
           opacity 0.5s ease;
       }
 
-      @media (min-width: 768px) {
-        .screen {
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
-          min-height: auto;
-          padding-bottom: 20px;
-        }
-        .screen.hidden {
-          display: flex !important;
-          transform: scale(0.95);
-          opacity: 0;
-          pointer-events: none;
-          z-index: 0;
-        }
-      }
-
       .screen.hidden {
-        display: none !important;
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
       }
 
       /* מסך משחקים נוספים גולש מלמטה למעלה */
@@ -619,12 +600,6 @@
         gap: 10px;
       }
 
-      @media (max-width: 767px) {
-        #startBtn {
-          margin-bottom: env(safe-area-inset-bottom, 12px);
-        }
-      }
-
       .btn:active {
         transform: scale(0.97);
       }
@@ -810,24 +785,6 @@
         }
         100% {
           box-shadow: 0 0 20px rgba(255, 0, 60, 0.15);
-        }
-      }
-
-      @media (max-width: 767px) {
-        #startBtn {
-          position: fixed;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          border-radius: 0; /* נפתח לרוחב מלא לחוויית מובייל נוחה */
-          padding: 18px;
-          font-size: 1.2rem;
-          z-index: 9999;
-          box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.9);
-          bottom: env(
-            safe-area-inset-bottom,
-            0px
-          ); /* תמיכה מלאה בנוץ' התחתון של אייפון */
         }
       }
     </style>
@@ -2352,9 +2309,6 @@
         document.getElementById("extraGamesScreen").className =
           "screen slide-up-hidden";
         document.getElementById("splashScreen").classList.remove("hidden");
-        document.getElementById("splashScreen").classList.add("visible");
-        document.getElementById("gameBoardScreen").classList.add("hidden");
-        document.getElementById("gameBoardScreen").classList.remove("visible");
 
         document.getElementById("accord-phone").checked = false;
         document.getElementById("accord-flow").checked = false;
