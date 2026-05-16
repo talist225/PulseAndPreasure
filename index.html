@@ -938,19 +938,19 @@
         transform: rotateX(-90deg) translateZ(70px);
       }
 
-      .dice-face-icon {
-        font-size: 2.8rem;
-        line-height: 1;
-        filter: drop-shadow(0 0 8px rgba(121, 40, 202, 0.8));
+      .dice-face svg {
+        filter: drop-shadow(0 0 6px rgba(255, 80, 120, 0.5));
+        flex-shrink: 0;
       }
 
       .dice-face-name {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 800;
-        color: rgba(255, 255, 255, 0.85);
+        color: rgba(255, 255, 255, 0.9);
         text-align: center;
-        padding: 0 8px;
+        padding: 0 6px;
         letter-spacing: 0.3px;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
       }
 
       .dice-result-box {
@@ -977,6 +977,10 @@
         font-size: 2rem;
         line-height: 1;
         transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 48px;
       }
 
       .dice-result-name {
@@ -991,6 +995,136 @@
         color: #b3a2a7;
         line-height: 1.4;
         margin-top: 2px;
+      }
+      .game-header-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .game-header-top-row .stage-tracker {
+        flex: 1;
+      }
+
+      .music-toggle-btn {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 5px 9px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: white;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+        line-height: 1;
+      }
+
+      .music-toggle-btn:active {
+        transform: scale(0.92);
+      }
+
+      .music-toggle-btn.music-on {
+        background: rgba(255, 80, 120, 0.15);
+        border-color: rgba(255, 80, 120, 0.4);
+      }
+
+      /* ===== Reset Confirm Modal ===== */
+      .reset-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        backdrop-filter: blur(6px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .reset-modal-overlay.visible {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .reset-modal {
+        background: linear-gradient(145deg, #1a0020, #2d0040);
+        border: 1px solid rgba(255, 80, 120, 0.35);
+        border-radius: 24px;
+        padding: 28px 24px 22px;
+        text-align: center;
+        max-width: 320px;
+        width: 100%;
+        box-shadow: 0 0 40px rgba(255, 80, 120, 0.25);
+        transform: scale(0.9);
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .reset-modal-overlay.visible .reset-modal {
+        transform: scale(1);
+      }
+
+      .reset-modal-emoji {
+        font-size: 2.8rem;
+        margin-bottom: 10px;
+      }
+
+      .reset-modal-title {
+        font-size: 1.25rem;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+
+      .reset-modal-desc {
+        font-size: 0.88rem;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.5;
+        margin-bottom: 22px;
+      }
+
+      .reset-modal-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .reset-modal-cancel {
+        flex: 1;
+        padding: 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: transparent;
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .reset-modal-cancel:active {
+        opacity: 0.7;
+      }
+
+      .reset-modal-confirm {
+        flex: 1;
+        padding: 12px;
+        border-radius: 14px;
+        border: none;
+        background: var(--neon-red);
+        color: #fff;
+        font-size: 0.95rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 4px 14px var(--neon-glow);
+        transition: all 0.2s;
+      }
+
+      .reset-modal-confirm:active {
+        transform: scale(0.96);
       }
     </style>
   </head>
@@ -1095,7 +1229,7 @@
               style="margin: 0; width: auto; gap: 5px"
             >
               <button
-                class="gender-btn active"
+                class="gender-btn"
                 id="audio-on"
                 onclick="toggleAudioSetting(true)"
                 style="padding: 6px 12px"
@@ -1103,7 +1237,7 @@
                 כן
               </button>
               <button
-                class="gender-btn"
+                class="gender-btn active"
                 id="audio-off"
                 onclick="toggleAudioSetting(false)"
                 style="padding: 6px 12px"
@@ -1410,27 +1544,553 @@
               <div class="dice-scene" id="diceScene">
                 <div class="dice-cube" id="diceCube">
                   <div class="dice-face face-1">
-                    <div class="dice-face-icon">📐</div>
-                    <div class="dice-face-name">מיסיונרית משודרגת</div>
+                    <!-- מיסיונרית משודרגת: היא על הגב רגליים מורמות, הוא מעל נשען -->
+                    <svg
+                      viewBox="0 0 110 90"
+                      width="96"
+                      height="78"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        fill="none"
+                      >
+                        <!-- היא (לבן) - גוף אופקי -->
+                        <circle
+                          cx="22"
+                          cy="38"
+                          r="8"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <path
+                          d="M22 46 C22 56 30 62 45 62"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- ירך ורגל שמאל מורמת -->
+                        <path
+                          d="M30 62 C34 55 30 44 26 36"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- ירך ורגל ימין מורמת -->
+                        <path
+                          d="M45 62 C50 55 50 44 46 36"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- כרית מתחת לישבן -->
+                        <ellipse
+                          cx="37"
+                          cy="65"
+                          rx="14"
+                          ry="4"
+                          stroke="rgba(255,255,255,0.3)"
+                          stroke-width="1.5"
+                          stroke-dasharray="4,2"
+                        />
+
+                        <!-- הוא (אדום-ורוד) - גוף באלכסון מעל -->
+                        <circle
+                          cx="82"
+                          cy="22"
+                          r="8"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף נוטה קדימה -->
+                        <path
+                          d="M80 30 C72 40 60 50 50 58"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- יד שמאל נשענת -->
+                        <path
+                          d="M76 38 C68 36 60 38 55 42"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- יד ימין נשענת -->
+                        <path
+                          d="M84 36 C88 38 90 44 88 50"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- רגל שמאל -->
+                        <path
+                          d="M56 60 C52 68 48 74 44 78"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- רגל ימין -->
+                        <path
+                          d="M64 60 C68 68 72 74 76 78"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                      </g>
+                    </svg>
+                    <div class="dice-face-name">מיסיונרית</div>
                   </div>
+
                   <div class="dice-face face-2">
-                    <div class="dice-face-icon">🐎</div>
+                    <!-- קאוגירל: הוא שוכב, היא יושבת מעליו פונה אליו -->
+                    <svg
+                      viewBox="0 0 110 90"
+                      width="96"
+                      height="78"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        fill="none"
+                      >
+                        <!-- הוא (אדום) - שוכב אופקי -->
+                        <circle
+                          cx="88"
+                          cy="68"
+                          r="8"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <path
+                          d="M80 70 C60 72 35 70 18 68"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- רגל שמאל -->
+                        <path
+                          d="M24 70 C20 76 16 80 12 84"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- רגל ימין -->
+                        <path
+                          d="M36 70 C34 76 32 80 30 84"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+
+                        <!-- היא (לבן) - יושבת מעל, ישרה -->
+                        <circle
+                          cx="55"
+                          cy="18"
+                          r="8"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף ישר למטה -->
+                        <path
+                          d="M55 26 C55 36 55 46 55 58"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- ידיים פרושות בשליטה -->
+                        <path
+                          d="M55 34 C46 32 38 30 32 28"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <path
+                          d="M55 34 C64 32 72 30 78 28"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- ירך שמאל -->
+                        <path
+                          d="M50 58 C44 62 40 66 38 72"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- ירך ימין -->
+                        <path
+                          d="M60 58 C66 62 70 66 72 72"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                      </g>
+                    </svg>
                     <div class="dice-face-name">קאוגירל</div>
                   </div>
+
                   <div class="dice-face face-3">
-                    <div class="dice-face-icon">🐕</div>
+                    <!-- דוגי סטייל: היא על ארבע, הוא מאחורה זקוף -->
+                    <svg
+                      viewBox="0 0 110 90"
+                      width="96"
+                      height="78"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        fill="none"
+                      >
+                        <!-- היא (לבן) - על ארבע אופקית -->
+                        <circle
+                          cx="18"
+                          cy="32"
+                          r="7.5"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף אופקי -->
+                        <path
+                          d="M18 40 C18 48 20 52 22 54"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <path
+                          d="M22 54 C35 54 52 54 62 54"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- יד שמאל (נשענת) -->
+                        <path
+                          d="M18 44 C14 48 12 54 12 60"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- יד ימין (נשענת) -->
+                        <path
+                          d="M26 44 C28 48 28 54 28 60"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- רגל שמאל אחורה -->
+                        <path
+                          d="M56 54 C58 62 56 70 52 76"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- רגל ימין אחורה -->
+                        <path
+                          d="M64 54 C68 62 68 70 66 76"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+
+                        <!-- הוא (אדום) - עומד מאחורה, גוף זקוף קדימה -->
+                        <circle
+                          cx="84"
+                          cy="22"
+                          r="8"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף נוטה קדימה ולמטה -->
+                        <path
+                          d="M82 30 C78 38 74 46 70 52"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- ידיים אוחזות בירכיים -->
+                        <path
+                          d="M78 42 C72 46 66 50 60 52"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <path
+                          d="M86 42 C86 48 84 52 80 54"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- רגליים -->
+                        <path
+                          d="M74 54 C72 64 70 72 68 80"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <path
+                          d="M84 52 C84 62 84 72 84 80"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                      </g>
+                    </svg>
                     <div class="dice-face-name">דוגי סטייל</div>
                   </div>
+
                   <div class="dice-face face-4">
-                    <div class="dice-face-icon">🥄</div>
+                    <!-- ספון: שניהם שוכבים על הצד, גב לגב (הוא מאחורה) -->
+                    <svg
+                      viewBox="0 0 110 90"
+                      width="96"
+                      height="78"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        fill="none"
+                      >
+                        <!-- הוא (אדום) - שוכב על הצד, מאחורה -->
+                        <circle
+                          cx="82"
+                          cy="36"
+                          r="8"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף מעוקל -->
+                        <path
+                          d="M80 44 C72 50 58 54 48 56"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- יד עוטפת -->
+                        <path
+                          d="M74 50 C66 46 56 46 48 48"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- רגל עליונה -->
+                        <path
+                          d="M54 58 C50 64 44 70 38 76"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- רגל תחתונה -->
+                        <path
+                          d="M60 60 C58 66 54 72 50 78"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+
+                        <!-- היא (לבן) - שוכבת לפניו, גוף מעוקל קדימה -->
+                        <circle
+                          cx="26"
+                          cy="30"
+                          r="7.5"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף מעוקל -->
+                        <path
+                          d="M26 38 C30 46 38 52 48 56"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- יד קדמית -->
+                        <path
+                          d="M30 42 C22 44 16 46 12 50"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- רגל עליונה מעט מורמת -->
+                        <path
+                          d="M42 58 C40 65 36 72 30 78"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- רגל תחתונה -->
+                        <path
+                          d="M50 60 C48 66 44 72 40 78"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                      </g>
+                    </svg>
                     <div class="dice-face-name">ספון</div>
                   </div>
+
                   <div class="dice-face face-5">
-                    <div class="dice-face-icon">🍑</div>
+                    <!-- קאוגירל הפוכה: הוא שוכב, היא מעליו גב אליו -->
+                    <svg
+                      viewBox="0 0 110 90"
+                      width="96"
+                      height="78"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        fill="none"
+                      >
+                        <!-- הוא (אדום) - שוכב -->
+                        <circle
+                          cx="18"
+                          cy="68"
+                          r="8"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <path
+                          d="M26 70 C45 72 65 70 82 68"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <path
+                          d="M76 70 C80 76 82 80 84 84"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <path
+                          d="M88 70 C90 76 90 80 88 84"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+
+                        <!-- היא (לבן) - יושבת הפוכה, גבה אל הצופה/הגבר -->
+                        <circle
+                          cx="55"
+                          cy="16"
+                          r="7.5"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף - רואים מהגב -->
+                        <path
+                          d="M55 24 C55 34 54 46 54 58"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="3"
+                        />
+                        <!-- כתפיים רחבות (רואים מהגב) -->
+                        <path
+                          d="M46 28 C48 26 55 24 62 26 C64 28 64 28 64 28"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- ידיים נשענות על שוקיו -->
+                        <path
+                          d="M48 32 C42 40 36 50 34 60"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <path
+                          d="M62 32 C68 40 74 50 76 60"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- ירכיים וברכיים -->
+                        <path
+                          d="M50 58 C44 62 38 66 34 72"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <path
+                          d="M58 58 C64 62 70 66 74 72"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- חץ המציין כיוון הפוך -->
+                        <path
+                          d="M42 10 C48 6 62 6 68 10"
+                          stroke="rgba(255,255,255,0.4)"
+                          stroke-width="1.5"
+                          stroke-dasharray="3,2"
+                          marker-end="url(#arr)"
+                        />
+                      </g>
+                    </svg>
                     <div class="dice-face-name">קאוגירל הפוכה</div>
                   </div>
+
                   <div class="dice-face face-6">
-                    <div class="dice-face-icon">🧱</div>
+                    <!-- עמידה מאחור: היא נשענת על קיר, הוא מאחורה -->
+                    <svg
+                      viewBox="0 0 110 90"
+                      width="96"
+                      height="78"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <g
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        fill="none"
+                      >
+                        <!-- קיר -->
+                        <line
+                          x1="12"
+                          y1="6"
+                          x2="12"
+                          y2="86"
+                          stroke="rgba(255,255,255,0.25)"
+                          stroke-width="4"
+                          stroke-linecap="round"
+                        />
+
+                        <!-- היא (לבן) - עומדת, נשענת קדימה על הקיר -->
+                        <circle
+                          cx="30"
+                          cy="16"
+                          r="7.5"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף נוטה קדימה -->
+                        <path
+                          d="M30 24 C28 34 24 44 22 54"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- יד שמאל נשענת על קיר -->
+                        <path
+                          d="M28 32 C22 28 16 22 12 16"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- יד ימין נשענת -->
+                        <path
+                          d="M34 34 C30 30 20 26 12 26"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- רגל שמאל -->
+                        <path
+                          d="M18 54 C16 64 14 74 12 82"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- רגל ימין -->
+                        <path
+                          d="M26 56 C26 66 26 74 28 82"
+                          stroke="rgba(255,255,255,0.95)"
+                          stroke-width="2.5"
+                        />
+
+                        <!-- הוא (אדום) - עומד מאחורה, גוף ישר, צמוד אליה -->
+                        <circle
+                          cx="66"
+                          cy="14"
+                          r="8"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- גוף נוטה קדימה -->
+                        <path
+                          d="M64 22 C58 32 50 44 44 54"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- ידיים אוחזות בירכיה -->
+                        <path
+                          d="M60 36 C52 38 42 40 34 42"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <path
+                          d="M64 42 C58 46 50 50 42 52"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.2"
+                        />
+                        <!-- רגל שמאל -->
+                        <path
+                          d="M48 56 C46 66 44 74 42 82"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                        <!-- רגל ימין -->
+                        <path
+                          d="M60 56 C62 66 64 74 66 82"
+                          stroke="rgba(255,80,120,0.95)"
+                          stroke-width="2.5"
+                        />
+                      </g>
+                    </svg>
                     <div class="dice-face-name">עמידה מאחור</div>
                   </div>
                 </div>
@@ -1475,8 +2135,18 @@
         style="background: transparent"
       >
         <div class="game-header">
-          <div class="stage-tracker stage-1" id="stageTracker">
-            שלב 1: גישושים וחימום מנועים ✨
+          <div class="game-header-top-row">
+            <div class="stage-tracker stage-1" id="stageTracker">
+              שלב 1: גישושים וחימום מנועים ✨
+            </div>
+            <button
+              class="music-toggle-btn"
+              id="musicToggleBtn"
+              onclick="toggleInGameMusic()"
+              title="מוזיקה"
+            >
+              🔇
+            </button>
           </div>
           <div class="timer-banner" id="timerBanner">⏳ זמן נותר: 10:00</div>
 
@@ -1575,6 +2245,24 @@
       </div>
     </div>
 
+    <!-- Modal אישור איפוס -->
+    <div class="reset-modal-overlay" id="resetModalOverlay">
+      <div class="reset-modal">
+        <div class="reset-modal-emoji">🔥</div>
+        <div class="reset-modal-title">העניינים כבר חמים!</div>
+        <div class="reset-modal-desc">
+          בטוחים שאתם רוצים לעצור עכשיו?<br />כל ההתקדמות שלכם תאבד.
+        </div>
+        <div class="reset-modal-buttons">
+          <button class="reset-modal-cancel" onclick="closeResetModal()">
+            המשך! 💋
+          </button>
+          <button class="reset-modal-confirm" onclick="confirmReset()">
+            כן, איפוס
+          </button>
+        </div>
+      </div>
+    </div>
     <script>
       const baseCards = [
         // ================== שלב 1: גישושים וחימום ==================
@@ -1956,7 +2644,7 @@
       let isCardRevealed = false;
 
       // הגדרות מנוע המוזיקה
-      let isAudioEnabled = true;
+      let isAudioEnabled = false;
       let audioCtx = null;
       let synthNodes = [];
       let musicInterval = null;
@@ -2041,69 +2729,110 @@
       function playAmbientPad() {
         if (!audioCtx || audioCtx.state === "suspended") return;
 
-        const stage1Chords = [
-          [110.0, 130.81, 164.81],
-          [146.83, 174.61, 220.0],
-        ];
-        const stage2Chords = [
-          [82.41, 110.0, 130.81],
-          [98.0, 123.47, 164.81],
-        ];
-        const stage3Chords = [
-          [65.41, 98.0, 130.81],
-          [73.42, 110.0, 146.83],
-        ];
-        const stormChords = [
-          [130.81, 164.81, 196.0, 220.0],
-          [146.83, 174.61, 220.0, 293.66],
-        ];
-
-        let currentChordSet = stage1Chords;
-        if (isConductorRunning && conductorState === "storm") {
-          currentChordSet = stormChords;
-        } else if (currentGameStage === 2) {
-          currentChordSet = stage2Chords;
-        } else if (currentGameStage === 3) {
-          currentChordSet = stage3Chords;
-        }
-
-        staticChordIndex = (window.staticChordIndex || 0) + 1;
-        window.staticChordIndex = staticChordIndex;
-        let chord = currentChordSet[staticChordIndex % currentChordSet.length];
-
+        // הורד צלילים קיימים בצורה חלקה
         synthNodes.forEach((node) => {
           try {
             node.gain.gain.exponentialRampToValueAtTime(
               0.001,
-              audioCtx.currentTime + 1.2,
+              audioCtx.currentTime + 2,
             );
-            setTimeout(() => node.osc.stop(), 1300);
+            setTimeout(() => {
+              try {
+                node.osc.stop();
+              } catch (e) {}
+            }, 2200);
           } catch (e) {}
         });
         synthNodes = [];
 
-        chord.forEach((freq) => {
-          let osc = audioCtx.createOscillator();
-          let gainNode = audioCtx.createGain();
+        const stage = currentGameStage;
+        const isStorm = isConductorRunning && conductorState === "storm";
 
-          osc.type =
-            isConductorRunning && conductorState === "storm"
-              ? "sawtooth"
-              : "triangle";
-          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        // תדרי בסיס לפי שלב — יורדים ומעמיקים ככל שמתקדמים
+        const roots = isStorm
+          ? [55, 82.4]
+          : stage === 3
+            ? [41.2, 55]
+            : stage === 2
+              ? [55, 73.4]
+              : [65.4, 82.4];
+        const root = roots[(window.staticChordIndex || 0) % roots.length];
+        window.staticChordIndex = (window.staticChordIndex || 0) + 1;
 
-          gainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        // אקורדים — יחסי תדרים ארוטיים (minor + maj7 + sus2)
+        const intervals = isStorm
+          ? [1, 1.189, 1.414, 1.587, 2] // minor + tritone — מתח גבוה
+          : stage === 3
+            ? [1, 1.189, 1.498, 1.782, 2.378] // minor 7 — עמוק ולוהט
+            : stage === 2
+              ? [1, 1.26, 1.498, 1.782, 2.245] // minor + sus4 — חושני
+              : [1, 1.26, 1.498, 1.782, 2.378]; // major 7 — רומנטי ורך
+
+        const now = audioCtx.currentTime;
+        const vol = isStorm ? 0.018 : 0.01;
+
+        intervals.forEach((ratio, i) => {
+          const freq = root * ratio;
+
+          // oscillator ראשי — sine עם detuning קל לחמימות
+          const osc = audioCtx.createOscillator();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now);
+          osc.detune.setValueAtTime(i % 2 === 0 ? -4 : 4, now); // detuning חם
+
+          // oscillator שני — sub octave עדין
+          const oscSub = audioCtx.createOscillator();
+          oscSub.type = "triangle";
+          oscSub.frequency.setValueAtTime(freq * 0.5, now);
+
+          // LFO לפולסציה סקסית עדינה
+          const lfo = audioCtx.createOscillator();
+          lfo.frequency.setValueAtTime(isStorm ? 1.8 : 0.35, now);
+          const lfoGain = audioCtx.createGain();
+          lfoGain.gain.setValueAtTime(freq * (isStorm ? 0.008 : 0.003), now);
+          lfo.connect(lfoGain);
+          lfoGain.connect(osc.frequency);
+          lfo.start(now);
+
+          // envelope — fade in חלק
+          const gainNode = audioCtx.createGain();
+          gainNode.gain.setValueAtTime(0.0001, now);
           gainNode.gain.linearRampToValueAtTime(
-            isConductorRunning && conductorState === "storm" ? 0.7 : 1,
-            audioCtx.currentTime + 1.2,
+            vol * (i === 0 ? 1.4 : 0.7),
+            now + 2.5,
           );
 
-          osc.connect(gainNode);
-          gainNode.connect(masterGain);
+          const gainSub = audioCtx.createGain();
+          gainSub.gain.setValueAtTime(0.0001, now);
+          gainSub.gain.linearRampToValueAtTime(vol * 0.5, now + 3);
 
-          osc.start();
-          synthNodes.push({ osc: osc, gain: gainNode });
+          // חיבור
+          osc.connect(gainNode);
+          oscSub.connect(gainSub);
+          gainNode.connect(masterGain);
+          gainSub.connect(masterGain);
+
+          osc.start(now);
+          oscSub.start(now);
+          synthNodes.push({ osc, gain: gainNode });
+          synthNodes.push({ osc: oscSub, gain: gainSub });
+          synthNodes.push({ osc: lfo, gain: lfoGain });
         });
+
+        // bass pulse — פעימה עמוקה ומינימלית
+        if (!isStorm) {
+          const bass = audioCtx.createOscillator();
+          bass.type = "sine";
+          bass.frequency.setValueAtTime(root * 0.5, now);
+          const bassGain = audioCtx.createGain();
+          bassGain.gain.setValueAtTime(0.0001, now);
+          bassGain.gain.linearRampToValueAtTime(0.022, now + 0.8);
+          bassGain.gain.linearRampToValueAtTime(0.008, now + 3.5);
+          bass.connect(bassGain);
+          bassGain.connect(masterGain);
+          bass.start(now);
+          synthNodes.push({ osc: bass, gain: bassGain });
+        }
       }
 
       function stopAmbianceMusic() {
@@ -2158,6 +2887,14 @@
         document.getElementById("gameScreen").classList.remove("hidden");
         updateTurnUI();
         updateStageUI();
+
+        // עדכן כפתור מוזיקה לפי מצב נוכחי
+        const musicBtn = document.getElementById("musicToggleBtn");
+        if (musicBtn) {
+          musicBtn.textContent = isAudioEnabled ? "🎵" : "🔇";
+          if (isAudioEnabled) musicBtn.classList.add("music-on");
+          else musicBtn.classList.remove("music-on");
+        }
       }
 
       function startCountdown() {
@@ -2473,42 +3210,42 @@
       const dicePositions = [
         {
           face: 1,
-          icon: "📐",
+          svg: `<svg viewBox="0 0 100 80" width="60" height="48" xmlns="http://www.w3.org/2000/svg"><ellipse cx="30" cy="52" rx="22" ry="9" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><circle cx="30" cy="38" r="7" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><line x1="18" y1="55" x2="10" y2="38" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="42" y1="55" x2="50" y2="38" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><ellipse cx="50" cy="46" rx="18" ry="8" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><circle cx="68" cy="36" r="7" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><line x1="52" y1="52" x2="45" y2="65" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="65" y1="52" x2="72" y2="65" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/></svg>`,
           name: "מיסיונרית משודרגת",
           desc: "כרית מתחת לישבן שלה. חדירה עמוקה עם חיכוך בדגדגן. ידיים אוחזות מאחורה. 3 דקות.",
           transform: "rotateX(0deg) rotateY(0deg)",
         },
         {
           face: 2,
-          icon: "🐎",
+          svg: `<svg viewBox="0 0 100 80" width="60" height="48" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="62" rx="28" ry="8" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><circle cx="78" cy="52" r="7" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><line x1="35" y1="66" x2="28" y2="74" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="65" y1="66" x2="72" y2="74" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><circle cx="50" cy="20" r="7" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><ellipse cx="50" cy="36" rx="12" ry="9" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><line x1="40" y1="44" x2="33" y2="58" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="60" y1="44" x2="67" y2="58" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/></svg>`,
           name: "קאוגירל",
           desc: "היא מעל, שולטת בקצב ובעומק לחלוטין. הוא שוכב ונהנה ומלטף את ירכיה. 3 דקות.",
           transform: "rotateX(0deg) rotateY(180deg)",
         },
         {
           face: 3,
-          icon: "🐕",
+          svg: `<svg viewBox="0 0 100 80" width="60" height="48" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="30" r="7" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><line x1="22" y1="37" x2="22" y2="52" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="22" y1="45" x2="48" y2="45" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="14" y1="52" x2="10" y2="64" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="30" y1="52" x2="26" y2="64" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="22" y1="45" x2="14" y2="55" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"/><line x1="48" y1="45" x2="40" y2="55" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"/><circle cx="75" cy="28" r="7" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><line x1="75" y1="35" x2="62" y2="46" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="62" y1="46" x2="48" y2="45" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="68" y1="46" x2="65" y2="62" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="80" y1="44" x2="83" y2="62" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/></svg>`,
           name: "דוגי סטייל",
           desc: "היא על ארבע, הוא מאחורה. ידיו אוחזות בירכיה בחוזקה. עומק מקסימלי. 3 דקות.",
           transform: "rotateX(0deg) rotateY(-90deg)",
         },
         {
           face: 4,
-          icon: "🥄",
+          svg: `<svg viewBox="0 0 100 80" width="60" height="48" xmlns="http://www.w3.org/2000/svg"><circle cx="25" cy="30" r="7" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><ellipse cx="38" cy="50" rx="20" ry="9" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><line x1="22" y1="57" x2="18" y2="70" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="52" y1="55" x2="56" y2="68" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><circle cx="72" cy="26" r="7" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><ellipse cx="62" cy="46" rx="18" ry="8" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><line x1="50" y1="52" x2="46" y2="66" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="74" y1="52" x2="78" y2="66" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><path d="M68 36 Q72 41 66 44" fill="none" stroke="rgba(255,80,120,0.6)" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
           name: "ספון",
           desc: "שניהם על הצד, גוף לגוף. חדירה אינטימית וצמודה. נשיקות בעורף. 3 דקות.",
           transform: "rotateX(0deg) rotateY(90deg)",
         },
         {
           face: 5,
-          icon: "🍑",
+          svg: `<svg viewBox="0 0 100 80" width="60" height="48" xmlns="http://www.w3.org/2000/svg"><ellipse cx="50" cy="65" rx="28" ry="7" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><circle cx="22" cy="55" r="7" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><line x1="35" y1="69" x2="30" y2="76" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="65" y1="69" x2="70" y2="76" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><circle cx="50" cy="18" r="7" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><ellipse cx="50" cy="34" rx="12" ry="9" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><line x1="40" y1="42" x2="34" y2="56" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="60" y1="42" x2="66" y2="56" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><path d="M42 12 Q50 8 58 12" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" stroke-dasharray="3,2"/></svg>`,
           name: "קאוגירל הפוכה",
           desc: "היא מעל אבל הפנים שלה לכיוון הרגליים שלו. היא קובעת קצב, הוא נהנה מהנוף. 3 דקות.",
           transform: "rotateX(-90deg) rotateY(0deg)",
         },
         {
           face: 6,
-          icon: "🧱",
+          svg: `<svg viewBox="0 0 100 80" width="60" height="48" xmlns="http://www.w3.org/2000/svg"><line x1="15" y1="10" x2="15" y2="75" stroke="rgba(255,255,255,0.3)" stroke-width="3" stroke-linecap="round"/><circle cx="30" cy="18" r="7" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2.2"/><line x1="30" y1="25" x2="30" y2="50" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="30" y1="34" x2="18" y2="28" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="18" y1="28" x2="15" y2="22" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"/><line x1="24" y1="50" x2="20" y2="68" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><line x1="36" y1="50" x2="40" y2="68" stroke="rgba(255,255,255,0.9)" stroke-width="2.2" stroke-linecap="round"/><circle cx="62" cy="18" r="7" fill="none" stroke="rgba(255,80,120,0.95)" stroke-width="2.2"/><line x1="62" y1="25" x2="50" y2="50" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="56" y1="35" x2="44" y2="30" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="44" y1="50" x2="38" y2="68" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/><line x1="56" y1="50" x2="60" y2="68" stroke="rgba(255,80,120,0.95)" stroke-width="2.2" stroke-linecap="round"/></svg>`,
           name: "עמידה מאחור",
           desc: "היא נשענת על קיר או משטח, הוא מאחורה צמוד. ידיו אוחזות בירכיה. 3 דקות.",
           transform: "rotateX(90deg) rotateY(0deg)",
@@ -2541,7 +3278,7 @@
           cube.classList.remove("rolling");
           cube.style.transform = chosen.transform;
 
-          document.getElementById("diceResultIcon").innerText = chosen.icon;
+          document.getElementById("diceResultIcon").innerHTML = chosen.svg;
           document.getElementById("diceResultName").innerText = chosen.name;
           document.getElementById("diceResultDesc").innerText = chosen.desc;
           resultBox.classList.add("revealed");
@@ -2551,49 +3288,52 @@
           isDiceRolling = false;
         }, 1050);
       }
-      const btn = document.getElementById("conductorActionBtn");
 
-      if (!isConductorRunning) {
-        isConductorRunning = true;
-        btn.innerText = "🛑 עצור את מאמן הקצב";
-        btn.style.background = "transparent";
-        btn.style.border = "2px solid var(--neon-red)";
-        btn.style.color = "var(--neon-red)";
+      function toggleConductor() {
+        const btn = document.getElementById("conductorActionBtn");
 
-        conductorState = "storm";
-        setupConductorPhase();
+        if (!isConductorRunning) {
+          isConductorRunning = true;
+          btn.innerText = "🛑 עצור את מאמן הקצב";
+          btn.style.background = "transparent";
+          btn.style.border = "2px solid var(--neon-red)";
+          btn.style.color = "var(--neon-red)";
 
-        conductorTimerInterval = setInterval(() => {
-          conductorSecondsLeft--;
-          document.getElementById("condTimer").innerText =
-            `00:${conductorSecondsLeft < 10 ? "0" + conductorSecondsLeft : conductorSecondsLeft}`;
+          conductorState = "storm";
+          setupConductorPhase();
 
-          if (conductorSecondsLeft <= 0) {
-            conductorState = conductorState === "storm" ? "freeze" : "storm";
-            setupConductorPhase();
+          conductorTimerInterval = setInterval(() => {
+            conductorSecondsLeft--;
+            document.getElementById("condTimer").innerText =
+              `00:${conductorSecondsLeft < 10 ? "0" + conductorSecondsLeft : conductorSecondsLeft}`;
+
+            if (conductorSecondsLeft <= 0) {
+              conductorState = conductorState === "storm" ? "freeze" : "storm";
+              setupConductorPhase();
+            }
+          }, 1000);
+        } else {
+          isConductorRunning = false;
+          clearInterval(conductorTimerInterval);
+          document.getElementById("condTimer").innerText = "--:--";
+          document.getElementById("condBox").className =
+            "conductor-box cond-freeze";
+          document.getElementById("condStatus").innerText = "FREEZE";
+          document.getElementById("condStatus").style.color = "var(--ice-blue)";
+          document.getElementById("condDesc").innerText =
+            "עצירה מוחלטת! הישארו בפנים ללא תנועה, הביטו ישירות בעיניים ובנו את המתח המיני.";
+
+          btn.innerText = "🔥 התחל מאמן סערה ושיא";
+          btn.style.background = "var(--neon-red)";
+          btn.style.border = "none";
+          btn.style.color = "white";
+          btn.style.boxShadow = "0 6px 20px var(--neon-glow)";
+
+          if (masterGain && audioCtx) {
+            masterGain.gain.setValueAtTime(0.012, audioCtx.currentTime);
           }
-        }, 1000);
-      } else {
-        isConductorRunning = false;
-        clearInterval(conductorTimerInterval);
-        document.getElementById("condTimer").innerText = "--:--";
-        document.getElementById("condBox").className =
-          "conductor-box cond-freeze";
-        document.getElementById("condStatus").innerText = "FREEZE";
-        document.getElementById("condStatus").style.color = "var(--ice-blue)";
-        document.getElementById("condDesc").innerText =
-          "עצירה מוחלטת! הישארו בפנים ללא תנועה, הביטו ישירות בעיניים ובנו את המתח המיני.";
-
-        btn.innerText = "🔥 התחל מאמן סערה ושיא";
-        btn.style.background = "var(--neon-red)";
-        btn.style.border = "none";
-        btn.style.color = "white";
-        btn.style.boxShadow = "0 6px 20px var(--neon-glow)";
-
-        if (masterGain && audioCtx) {
-          masterGain.gain.setValueAtTime(0.012, audioCtx.currentTime);
+          playAmbientPad();
         }
-        playAmbientPad();
       }
 
       function setupConductorPhase() {
@@ -2632,6 +3372,49 @@
       }
 
       function resetEntireGame() {
+        // אם המשחק כבר התחיל — הצג modal אישור
+        if (currentGameStage > 1 || playedCards.length > 0) {
+          document.getElementById("resetModalOverlay").classList.add("visible");
+          return;
+        }
+        confirmReset();
+      }
+
+      function closeResetModal() {
+        document
+          .getElementById("resetModalOverlay")
+          .classList.remove("visible");
+      }
+
+      function confirmReset() {
+        closeResetModal();
+        _doReset();
+      }
+
+      function toggleInGameMusic() {
+        const btn = document.getElementById("musicToggleBtn");
+        if (isAudioEnabled) {
+          // כבה
+          isAudioEnabled = false;
+          stopAmbianceMusic();
+          btn.textContent = "🔇";
+          btn.classList.remove("music-on");
+          // עדכן גם כפתורי ה-splash
+          document.getElementById("audio-on").classList.remove("active");
+          document.getElementById("audio-off").classList.add("active");
+        } else {
+          // הפעל
+          isAudioEnabled = true;
+          btn.textContent = "🎵";
+          btn.classList.add("music-on");
+          document.getElementById("audio-on").classList.add("active");
+          document.getElementById("audio-off").classList.remove("active");
+          if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+          initAmbianceMusic();
+        }
+      }
+
+      function _doReset() {
         clearInterval(timerInterval);
         clearInterval(conductorTimerInterval);
         isConductorRunning = false;
@@ -2689,6 +3472,14 @@
         document.getElementById("accord-flow").checked = false;
         document.getElementById("startBtn").disabled = true;
         updateAmbientBackground(false);
+
+        // עדכן כפתור מוזיקה בתוך המשחק
+        const musicBtn = document.getElementById("musicToggleBtn");
+        if (musicBtn) {
+          musicBtn.textContent = isAudioEnabled ? "🎵" : "🔇";
+          if (isAudioEnabled) musicBtn.classList.add("music-on");
+          else musicBtn.classList.remove("music-on");
+        }
       }
 
       function validateAccord() {
